@@ -100,7 +100,7 @@ def main():
         if not args.checkpoint:
             raise ValueError("RoboJEPA benchmark requires the fine-tuned checkpoint")
         encoder, predictor, load_report = load_robojepa(args.weights, args.robo_repo, args.vjepa_repo,
-                                                       "cuda", args.checkpoint)
+                                                       "cuda", args.checkpoint, action_stats=stats)
         wm = RoboPlanningModel(encoder, predictor)
     write_json(out / "weight-loading.json", load_report)
     root = Path(__file__).resolve().parents[2]

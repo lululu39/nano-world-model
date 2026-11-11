@@ -40,6 +40,14 @@ def main():
     (output / "pretrained-loading.json").write_text(json.dumps(report, indent=2))
     train = PushTWindows(args.assets, "train", cfg["frames"], cfg["seed"])
     val = PushTWindows(args.assets, "val", cfg["frames"], cfg["seed"])
+    cfg["action_statistics"] = {"mean":train.action_transform.mean.tolist(), "std":train.action_transform.std.tolist()}
+    root = Path(__file__).resolve().parents[2]
+    provenance = {"assets":json.loads((Path(args.assets)/"provenance.json").read_text()),
+                  "torch":torch.__version__, "gpu":torch.cuda.get_device_name()}
+    for name, path in [("source",root),("robojepa",Path(args.robo_repo)),("vjepa",Path(args.vjepa_repo))]:
+        metadata = path/"SOURCE_VERSION.json"
+        provenance[name] = json.loads(metadata.read_text()) if metadata.exists() else {"path":str(path)}
+    (output/"provenance.json").write_text(json.dumps(provenance, indent=2))
     assert not set(train.episodes) & set(val.episodes)
     (output / "split.json").write_text(json.dumps({"train_episodes":train.episodes,
         "validation_episodes":val.episodes, "planning_split":"official val (not used for tuning)"}, indent=2))

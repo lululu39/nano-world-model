@@ -104,7 +104,18 @@ def load_nanowm(assets, protocol, device):
     return DiffusionWorldModel(model, codec, process, cfg), cfg, report
 
 
-def load_robojepa(weights, robo_repo, vjepa_repo, device, checkpoint=None):
+def validate_transfer_checkpoint(state, action_stats):
+    cfg = state["config"]
+    expected = {"representation":"vjepa21g-256-ln-rowmajor-v1", "context_frames":1,
+        "frame_interval":5, "action_dim":10, "state_policy":"zeros", "embodiment_id":2, "view_ids":[0]}
+    if any(cfg.get(k) != v for k,v in expected.items()):
+        raise ValueError("Fine-tuned checkpoint uses incompatible observation/action semantics")
+    actual = {k:torch.as_tensor(v).tolist() for k,v in action_stats.items()}
+    if cfg.get("action_statistics") != actual:
+        raise ValueError("Fine-tuned checkpoint action normalization differs from the benchmark")
+
+
+def load_robojepa(weights, robo_repo, vjepa_repo, device, checkpoint=None, action_stats=None):
     from .contracts import LatentSpec
     from .encoders import robojepa_encoder
     from .predictors import RoboJEPAPredictor
@@ -124,8 +135,9 @@ def load_robojepa(weights, robo_repo, vjepa_repo, device, checkpoint=None):
     del state, source
     if checkpoint:
         trained = torch.load(checkpoint, map_location="cpu", weights_only=False)
-        if trained["config"]["representation"] != "vjepa21g-256-ln-rowmajor-v1":
-            raise ValueError("Fine-tuned checkpoint uses an incompatible representation")
+        if action_stats is None:
+            raise ValueError("Benchmark action statistics are required for checkpoint compatibility")
+        validate_transfer_checkpoint(trained, action_stats)
         predictor.load_state_dict(trained["model"], strict=True)
         report["finetuned_step"] = trained["step"]
     return encoder.to(device).eval(), predictor.to(device), report
