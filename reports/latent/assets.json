@@ -1,0 +1,12 @@
+{
+  "vjepa2_1_vitG_384.pt": {
+    "url": "https://dl.fbaipublicfiles.com/vjepa2/vjepa2_1_vitG_384.pt",
+    "bytes": 30238058912,
+    "retained_key": "target_encoder",
+    "retained_bytes": 7381102559
+  },
+  "cooldown_22m_150k.pth.tar": {
+    "url": "https://dl.fbaipublicfiles.com/robojepa/wm/wm-22m/cooldown_22m_150k.pth.tar",
+    "bytes": 102192971
+  }
+}

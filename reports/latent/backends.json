@@ -1,0 +1,226 @@
+{
+  "kind": "synthetic_backend_engineering_check",
+  "formal_training": false,
+  "seed": 42,
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "torch": "2.7.1+cu128",
+  "shared_shape": [
+    2,
+    3,
+    4,
+    8
+  ],
+  "hidden_dim": 64,
+  "depth": 2,
+  "sampling_steps": 2,
+  "bf16_training": true,
+  "methods": {
+    "deterministic": {
+      "diagnostic_losses": [
+        1.4888075590133667,
+        1.0477325916290283,
+        0.8000547289848328
+      ],
+      "three_update_seconds": 0.4972692169249058,
+      "prediction": {
+        "per_horizon": [
+          {
+            "horizon": 1,
+            "count": 2,
+            "mse": 0.45220646262168884,
+            "mae": 0.5382479429244995,
+            "persistence_mse": 1.546172022819519,
+            "zero_action_sensitivity_mse": 0.02136802300810814
+          },
+          {
+            "horizon": 2,
+            "count": 2,
+            "mse": 0.4179556965827942,
+            "mae": 0.5213029384613037,
+            "persistence_mse": 1.8698718547821045,
+            "zero_action_sensitivity_mse": 0.04457346349954605
+          }
+        ],
+        "seed": 0,
+        "action_intervention": "zero actions; paired sampler RNG; no counterfactual ground truth"
+      },
+      "efficiency": {
+        "device": "cuda:0",
+        "gpu": "NVIDIA A100-SXM4-40GB",
+        "torch": "2.7.1+cu128",
+        "batch_size": 2,
+        "context_frames": 1,
+        "horizon": 2,
+        "cached_features": true,
+        "encode_seconds": [
+          9.208917617797852e-06,
+          6.532296538352966e-06,
+          7.66851007938385e-06
+        ],
+        "rollout_seconds": [
+          0.002150285989046097,
+          0.002111857756972313,
+          0.002106867730617523
+        ],
+        "parameters": 105928,
+        "trainable_parameters": 105928,
+        "peak_allocated_bytes": 19844096
+      },
+      "planning": {
+        "cost_history": [
+          [
+            0.43396419286727905,
+            0.4335439205169678
+          ],
+          [
+            0.42853468656539917,
+            0.42591592669487
+          ]
+        ],
+        "predicted_goal_distance": [
+          0.42853468656539917,
+          0.42591592669487
+        ],
+        "candidate_rollouts": 16
+      }
+    },
+    "diffusion": {
+      "diagnostic_losses": [
+        0.859558641910553,
+        0.9555628299713135,
+        0.9122123718261719
+      ],
+      "three_update_seconds": 0.2186157200485468,
+      "prediction": {
+        "per_horizon": [
+          {
+            "horizon": 1,
+            "count": 2,
+            "mse": 1.2118862867355347,
+            "mae": 0.8688204884529114,
+            "persistence_mse": 1.546172022819519,
+            "zero_action_sensitivity_mse": 0.0003881990269292146
+          },
+          {
+            "horizon": 2,
+            "count": 2,
+            "mse": 0.8433946371078491,
+            "mae": 0.7633994817733765,
+            "persistence_mse": 1.8698718547821045,
+            "zero_action_sensitivity_mse": 0.00036697855102829635
+          }
+        ],
+        "seed": 0,
+        "action_intervention": "zero actions; paired sampler RNG; no counterfactual ground truth"
+      },
+      "efficiency": {
+        "device": "cuda:0",
+        "gpu": "NVIDIA A100-SXM4-40GB",
+        "torch": "2.7.1+cu128",
+        "batch_size": 2,
+        "context_frames": 1,
+        "horizon": 2,
+        "cached_features": true,
+        "encode_seconds": [
+          8.231028914451599e-06,
+          8.339062333106995e-06,
+          7.24010169506073e-06
+        ],
+        "rollout_seconds": [
+          0.018449949100613594,
+          0.018980704247951508,
+          0.018420930951833725
+        ],
+        "parameters": 216392,
+        "trainable_parameters": 216392,
+        "peak_allocated_bytes": 21698560
+      },
+      "planning": {
+        "cost_history": [
+          [
+            0.8272905349731445,
+            0.949673056602478
+          ],
+          [
+            0.6059585809707642,
+            0.6689958572387695
+          ]
+        ],
+        "predicted_goal_distance": [
+          0.6059585809707642,
+          0.6689958572387695
+        ],
+        "candidate_rollouts": 16
+      }
+    },
+    "flow": {
+      "diagnostic_losses": [
+        1.7910501956939697,
+        1.9221962690353394,
+        1.7944871187210083
+      ],
+      "three_update_seconds": 0.035413604229688644,
+      "prediction": {
+        "per_horizon": [
+          {
+            "horizon": 1,
+            "count": 2,
+            "mse": 1.9370615482330322,
+            "mae": 1.0629491806030273,
+            "persistence_mse": 1.546172022819519,
+            "zero_action_sensitivity_mse": 0.00027830805629491806
+          },
+          {
+            "horizon": 2,
+            "count": 2,
+            "mse": 1.6777998208999634,
+            "mae": 1.028751254081726,
+            "persistence_mse": 1.8698718547821045,
+            "zero_action_sensitivity_mse": 0.0002766081888694316
+          }
+        ],
+        "seed": 0,
+        "action_intervention": "zero actions; paired sampler RNG; no counterfactual ground truth"
+      },
+      "efficiency": {
+        "device": "cuda:0",
+        "gpu": "NVIDIA A100-SXM4-40GB",
+        "torch": "2.7.1+cu128",
+        "batch_size": 2,
+        "context_frames": 1,
+        "horizon": 2,
+        "cached_features": true,
+        "encode_seconds": [
+          7.249414920806885e-06,
+          6.509944796562195e-06,
+          6.711110472679138e-06
+        ],
+        "rollout_seconds": [
+          0.01341172493994236,
+          0.013408433645963669,
+          0.01336335577070713
+        ],
+        "parameters": 216392,
+        "trainable_parameters": 216392,
+        "peak_allocated_bytes": 21697536
+      },
+      "planning": {
+        "cost_history": [
+          [
+            1.1890437602996826,
+            1.3729994297027588
+          ],
+          [
+            1.8744206428527832,
+            1.290764331817627
+          ]
+        ],
+        "predicted_goal_distance": [
+          1.1890437602996826,
+          1.290764331817627
+        ],
+        "candidate_rollouts": 16
+      }
+    }
+  }
+}

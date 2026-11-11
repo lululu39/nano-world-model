@@ -1,0 +1,28 @@
+{
+  "cpu_original": {
+    "tests": "34",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "1",
+    "time": "31.320",
+    "skips": [
+      {
+        "test": "test_lerobot_record_and_load_video",
+        "reason": "RT-1 extra not installed"
+      }
+    ]
+  },
+  "post_fix": {
+    "tests": "34",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "1",
+    "time": "15.971",
+    "skips": [
+      {
+        "test": "test_lerobot_record_and_load_video",
+        "reason": "RT-1 extra not installed"
+      }
+    ]
+  }
+}

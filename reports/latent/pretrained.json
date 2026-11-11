@@ -1,0 +1,75 @@
+{
+  "kind": "pretrained_engineering_check",
+  "formal_training": false,
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "torch": "2.7.1+cu128",
+  "resolution": [
+    32,
+    32
+  ],
+  "frozen_encoder_gradient_isolation": true,
+  "pretrained_predictor_gradient": true,
+  "pretrained_encoder_gradient": true,
+  "strict_checkpoint_load": true,
+  "native_predictor_equivalence": true,
+  "future_action_causality": true,
+  "frozen_loss": 0.5387148261070251,
+  "prediction": {
+    "per_horizon": [
+      {
+        "horizon": 1,
+        "count": 1,
+        "mse": 0.2624245285987854,
+        "mae": 0.3684612512588501,
+        "persistence_mse": 0.2070699781179428,
+        "zero_action_sensitivity_mse": 6.772119377274066e-05
+      },
+      {
+        "horizon": 2,
+        "count": 1,
+        "mse": 0.26398250460624695,
+        "mae": 0.3646574020385742,
+        "persistence_mse": 0.1830797642469406,
+        "zero_action_sensitivity_mse": 0.00013976392801851034
+      }
+    ],
+    "seed": 0,
+    "action_intervention": "zero actions; paired sampler RNG; no counterfactual ground truth"
+  },
+  "efficiency": {
+    "device": "cuda:0",
+    "gpu": "NVIDIA A100-SXM4-40GB",
+    "torch": "2.7.1+cu128",
+    "batch_size": 1,
+    "context_frames": 1,
+    "horizon": 2,
+    "cached_features": false,
+    "encode_seconds": [
+      0.11707973666489124,
+      0.11712264828383923
+    ],
+    "rollout_seconds": [
+      0.0632376242429018,
+      0.05896636284887791
+    ],
+    "parameters": 1870755008,
+    "trainable_parameters": 25538240,
+    "peak_allocated_bytes": 7605348864
+  },
+  "planning": {
+    "cost_history": [
+      [
+        0.26302599906921387
+      ],
+      [
+        0.26299428939819336
+      ]
+    ],
+    "predicted_goal_distance": [
+      0.26299428939819336
+    ],
+    "candidate_rollouts": 8
+  },
+  "peak_allocated_bytes": 15001412608,
+  "elapsed_seconds": 29.792602168396115
+}

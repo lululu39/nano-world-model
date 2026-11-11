@@ -1,0 +1,10 @@
+{
+  "torch": "2.7.1+cu128",
+  "decoder_packages_absent": [
+    "diffusers",
+    "lpips",
+    "piqa",
+    "pytorch_lightning",
+    "transformers"
+  ]
+}

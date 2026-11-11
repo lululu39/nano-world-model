@@ -3,6 +3,8 @@
 The new package is additive. Existing `src/main.py`, Hydra experiments,
 checkpoints, diffusion/flow losses and video applications remain supported.
 See [the inspection and architecture decisions](architecture.md).
+The [initial validation report](validation.md) records checks actually executed
+and separates them from future downstream experiments.
 
 ## Environment and smoke checks
 
@@ -197,3 +199,6 @@ Actual pretrained CUDA check:
 It uses real weights at a tiny 32x32 resolution to check strict loading,
 gradient flow, native equivalence, causal actions and planning. It does not
 establish long-horizon stability, task success or research-resolution throughput.
+
+`scripts/latent/verify_backends.py --output backends.json` separately runs bounded
+same-GPU bf16/rollout/CEM/timing checks for all three built-in dynamics backends.

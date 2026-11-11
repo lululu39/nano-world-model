@@ -1,0 +1,11 @@
+{
+  "python": "3.11.18",
+  "torch": "2.7.1+cu128",
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "upstream_robojepa": "f93106f5f4a451fd526d51778aa8ab7c852eb824",
+  "upstream_vjepa2": "204698b45b3712590f06245fbfba32d3be539812",
+  "core_code_commit": "d96e74faff61098f5bae44b2a0f27b150881baba",
+  "formal_training": false,
+  "wandb_runs_created": 0,
+  "backend_probe_commit": "3ad4f1610d7a95df937cf400ad11c073a37b3801"
+}
