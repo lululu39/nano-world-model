@@ -25,6 +25,7 @@ def main():
     p.add_argument("--vjepa-repo", default="vjepa2")
     p.add_argument("--output", required=True)
     p.add_argument("--context-frames", type=int, default=1)
+    p.add_argument("--loss-type", choices=["mae", "mse"], default="mae")
     args = p.parse_args()
     os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
     torch.use_deterministic_algorithms(True)
@@ -108,7 +109,7 @@ def main():
     def update():
         predictor.train(); optimizer.zero_grad(set_to_none=True)
         with torch.autocast("cuda", dtype=torch.bfloat16):
-            loss, _ = prediction_loss(predictor, z, batch.actions, args.context_frames)
+            loss, _ = prediction_loss(predictor, z, batch.actions, args.context_frames, loss_type=args.loss_type)
         loss.backward()
         assert torch.isfinite(loss)
         assert all(v.grad is None for v in encoder.parameters())
@@ -136,7 +137,8 @@ def main():
         "native_predictor_equivalence":True, "gradient_verified":True, "exact_resume_next_update":True,
         "relative_actions_match_source_positions":True, "normalized_action_replay_matches_raw":True,
         "deterministic_algorithms":True, "diagnostic_loss":first, "gpu":torch.cuda.get_device_name(),
-        "peak_bytes":torch.cuda.max_memory_allocated(), "rollout_context_frames":args.context_frames})
+        "peak_bytes":torch.cuda.max_memory_allocated(), "rollout_context_frames":args.context_frames,
+        "loss_type":args.loss_type})
     Path(args.output).write_text(json.dumps(report, indent=2))
     print(json.dumps(report), flush=True)
 

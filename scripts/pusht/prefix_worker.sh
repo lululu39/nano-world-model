@@ -50,6 +50,7 @@ export SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy TQDM_DISABLE=1 WANDB_MODE=dis
 PY="$PWD/runtime/.venv/bin/python"
 config="code/${PUSHT_TRAIN_CONFIG:-configs/pusht/robojepa22m_prefix_finetune.yaml}"
 test -f "$config"
+loss_type=$("$PY" -c 'import sys; from omegaconf import OmegaConf; print(OmegaConf.load(sys.argv[1]).get("loss_type", "mae"))' "$config")
 cp code/SOURCE_VERSION.json reports/source.json
 cp code/uv.lock reports/uv.lock
 touch ready
@@ -58,10 +59,10 @@ if [[ "$phase" == debug || ( "$phase" == recovery && ! -f reports/pytest.txt ) ]
 fi
 # Validate causal history on each actual training/evaluation GPU before proceeding.
 if [[ ! -f reports/hardware-gate.json ]]; then
-  "$PY" code/scripts/pusht/verify.py --assets assets --context-frames 3 --output reports/hardware-gate.json
+  "$PY" code/scripts/pusht/verify.py --assets assets --context-frames 3 --loss-type "$loss_type" --output reports/hardware-gate.json
 fi
 if [[ "$phase" == recovery ]]; then
-  "$PY" code/scripts/pusht/recovery_smoke.py --config "$config" --assets assets --output reports
+  "$PY" code/scripts/pusht/recovery_smoke.py --config "$config" --assets assets --output reports --planning-smoke
 elif [[ "$phase" == debug ]]; then
   "$PY" code/scripts/pusht/train.py --config "$config" --assets assets --output reports/smoke-training --smoke
   "$PY" code/scripts/pusht/evaluate.py --config code/configs/pusht/shared_benchmark.yaml \
@@ -74,11 +75,16 @@ elif [[ "$phase" == train ]]; then
   chmod 600 "$NETRC"
   "$PY" code/scripts/pusht/train.py --config "$config" --assets assets --output training
 else
-  test -f training/best.pt
+  evaluation_checkpoint="training/${PUSHT_EVAL_CHECKPOINT:-best.pt}"
+  test -f "$evaluation_checkpoint"
   "$PY" code/scripts/pusht/evaluate.py --config code/configs/pusht/shared_benchmark.yaml \
     --assets assets --goals goals/pusht-h3-seed42.pt --output reports/robojepa-prefix \
-    --model robojepa --checkpoint training/best.pt --max-seconds 1700
+    --model robojepa --checkpoint "$evaluation_checkpoint" --max-seconds 1700
   "$PY" code/scripts/pusht/summarize.py \
     --nanowm code/reports/pusht/shared-benchmark/nanowm-shared \
     --robojepa reports/robojepa-prefix --output reports/comparison
+  if [[ -n "${PUSHT_LOSS_BASELINE:-}" ]]; then
+    "$PY" code/scripts/pusht/compare_losses.py --baseline "code/$PUSHT_LOSS_BASELINE" \
+      --current . --output reports/loss-comparison
+  fi
 fi

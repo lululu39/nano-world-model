@@ -15,7 +15,7 @@ from omegaconf import OmegaConf
 import torch
 from latent_world.checkpoint import save_checkpoint, load_checkpoint
 from latent_world.data import StatefulBatcher, collate_sequences
-from latent_world.pusht import load_robojepa, PushTWindows, prediction_loss, transfer_context_frames
+from latent_world.pusht import load_robojepa, PushTWindows, prediction_loss, transfer_context_frames, transfer_loss_type
 
 
 def main():
@@ -38,6 +38,7 @@ def main():
         raise ValueError("Forced step checkpoints require diagnostic training and a positive step")
     cfg = OmegaConf.to_container(OmegaConf.load(args.config), resolve=True)
     context_frames = transfer_context_frames(cfg)
+    loss_type = transfer_loss_type(cfg)
     tcfg = cfg["training"]
     if args.smoke:
         tcfg.update(steps=8, eval_every=8, validation_windows=4)
@@ -114,7 +115,7 @@ def main():
             for group, base in zip(optimizer.param_groups, [tcfg["lr"], tcfg["adapter_lr"]]):
                 group["lr"] = base * warmup
             with torch.autocast("cuda", dtype=torch.bfloat16):
-                loss, parts = prediction_loss(predictor, z, batch.actions, context_frames)
+                loss, parts = prediction_loss(predictor, z, batch.actions, context_frames, loss_type=loss_type)
             if not torch.isfinite(loss):
                 raise FloatingPointError("Nonfinite latent prediction loss")
             loss.backward()
@@ -127,7 +128,8 @@ def main():
             if state["step"] % tcfg["eval_every"] == 0 or state["step"] == tcfg["steps"]:
                 predictor.eval()
                 with torch.no_grad(), torch.autocast("cuda", dtype=torch.bfloat16):
-                    values = [float(prediction_loss(predictor, z.cuda(), a.cuda(), context_frames)[0]) for z,a in validation]
+                    values = [float(prediction_loss(predictor, z.cuda(), a.cuda(), context_frames,
+                                                   loss_type=loss_type)[0]) for z,a in validation]
                 row["dev/loss"] = float(np.mean(values))
                 if not np.isfinite(row["dev/loss"]):
                     raise FloatingPointError("Nonfinite validation loss")
@@ -155,6 +157,7 @@ def main():
         "elapsed_seconds":previous_elapsed+time.monotonic()-started,
         "best_dev_loss":state["best"] if math.isfinite(state["best"]) else None,
         "diagnostic":args.smoke, "exit_code":code, "gpu":torch.cuda.get_device_name(),
+        "loss_type":loss_type,
         "completed":state["step"] == tcfg["steps"], "target_steps":tcfg["steps"],
         "windows_seen":state["step"]*tcfg["batch_size"],
         "stop_reason":"target_reached" if state["step"] == tcfg["steps"] else

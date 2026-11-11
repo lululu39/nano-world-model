@@ -74,10 +74,17 @@ class Pipeline:
         elif phase == 'evaluate':
             archive = Path(state['checkpoint']).name
             environment += f' PUSHT_CHECKPOINT_ARCHIVE={archive}'
+            checkpoint = state.get('evaluation_checkpoint', 'best.pt')
+            assert checkpoint in ('best.pt', 'latest.pt')
+            environment += f' PUSHT_EVAL_CHECKPOINT={checkpoint}'
+            if state.get('loss_baseline'):
+                environment += f' PUSHT_LOSS_BASELINE={state["loss_baseline"]}'
             files += ['results.tar', 'osdf:///chtc/staging/y/yzhong239/nanowm-research/' + archive]
         base = 'osdf:///chtc/staging/y/yzhong239/nanowm-research/'
         files += [base + name for name in ['pusht-runtime-v1.tar', 'pusht-assets-v1.tar', 'robojepa-22m-v1.tar']]
         gpu = '(GlobalMemoryMb >= 79000) && regexp("H100|H200", DeviceName) && !regexp("MIG", DeviceName)'
+        if phase == 'train' and state.get('training_gpu_requirement'):
+            gpu = '(GlobalMemoryMb >= 79000) && DeviceName == '+json.dumps(state['training_gpu_requirement'])
         if phase == 'recovery':
             # Diagnostic restarts must retain the same numerical backend.
             gpu = '(GlobalMemoryMb >= 79000) && regexp("H200", DeviceName) && !regexp("MIG", DeviceName)'
@@ -170,7 +177,8 @@ queue 1
                 raise RuntimeError(f'{phase} stopped: {ad.get("HoldReason", ad["JobStatus"])}')
             if ad['JobStatus'] == 1:
                 idle_since = idle_since or time.monotonic()
-                if phase == 'train' and not pinned and not expanded and time.monotonic()-idle_since >= 3600:
+                if (phase == 'train' and not state.get('training_gpu_requirement')
+                        and not pinned and not expanded and time.monotonic()-idle_since >= 3600):
                     subprocess.run(['condor_qedit', job, 'RequireGPUs',
                         '(GlobalMemoryMb >= 39000) && regexp("H100|H200|A100", DeviceName) && !regexp("MIG", DeviceName)'], check=True)
                     expanded = True
@@ -210,6 +218,11 @@ queue 1
         report = json.loads((recovery / 'reports/recovery-check.json').read_text())
         assert report['full_checkpoint_bitwise_equal'] and report['all_update_metrics_equal']
         assert report['final_step'] == 8 and report['diagnostic'] and not report['wandb_run_created']
+        if self.state().get('loss_type'):
+            assert report['loss_type'] == self.state()['loss_type']
+            gate = json.loads((recovery / 'reports/hardware-gate.json').read_text())
+            assert gate['loss_type'] == self.state()['loss_type']
+            assert report['planning_smoke']['completed']
         event_log = self.root / 'recovery/logs' / f'job.{job.split(".")[0]}.log'
         transfer = verify_recovery_transfer(history, event_log.read_text())
         (self.root / 'recovery/transfer-verification.json').write_text(json.dumps(transfer, indent=2)+'\n')
@@ -226,6 +239,8 @@ queue 1
         summary = json.loads((trained / 'training/summary.json').read_text())
         state = self.state()
         assert summary['run_id'] == state['run_id'] and not summary['diagnostic']
+        if state.get('loss_type'):
+            assert summary['loss_type'] == state['loss_type']
         if not summary['completed'] or summary['step'] != state['budget']['steps']:
             self.update(stage='training_budget_exhausted', training_result=summary, active_jobs=[], controller_active=False)
             log('Target incomplete; no budget extension or evaluation submitted')
@@ -245,7 +260,11 @@ queue 1
         evaluated = self.collect('evaluate')
         result = json.loads((evaluated / 'reports/robojepa-prefix/summary.json').read_text())
         assert result['completed'] and result['episodes'] == 64 and not result['diagnostic_subset']
-        self.update(stage='experiments_complete', evaluation_result=result, active_jobs=[], controller_active=False)
+        comparison = None
+        if self.state().get('loss_baseline'):
+            comparison = json.loads((evaluated / 'reports/loss-comparison/comparison.json').read_text())
+        self.update(stage='experiments_complete', evaluation_result=result, loss_comparison=comparison,
+                    active_jobs=[], controller_active=False)
         log(result)
 
 

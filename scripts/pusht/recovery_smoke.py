@@ -32,6 +32,7 @@ def main():
     p.add_argument("--config", required=True)
     p.add_argument("--assets", required=True)
     p.add_argument("--output", required=True)
+    p.add_argument("--planning-smoke", action="store_true")
     args = p.parse_args()
     root = Path(args.output)
     reference, resumed = root/"recovery-reference", root/"recovery-resumed"
@@ -66,11 +67,21 @@ def main():
     equal_tree(metrics(reference), metrics(resumed), "metrics")
     summary = json.loads((resumed/"summary.json").read_text())
     assert summary["completed"] and summary["step"] == 8 and summary["run_id"] is None
+    planning = None
+    if args.planning_smoke:
+        code_root = Path(__file__).resolve().parents[2]
+        subprocess.run([sys.executable, str(Path(__file__).with_name("evaluate.py")),
+                        "--config", str(code_root/"configs/pusht/shared_benchmark.yaml"),
+                        "--assets", args.assets, "--goals", "goals/pusht-h3-seed42.pt",
+                        "--output", str(root/"recovery-planning"), "--model", "robojepa",
+                        "--checkpoint", str(resumed/"latest.pt"), "--limit", "2"], check=True)
+        planning = json.loads((root/"recovery-planning/summary.json").read_text())
+        assert planning["completed"] and planning["diagnostic_subset"] and planning["episodes"] == 2
     report = {"completed":True, "interrupted_step":4, "final_step":8,
               "full_checkpoint_bitwise_equal":True, "all_update_metrics_equal":True,
               "diagnostic":True, "wandb_run_created":False,
               "first_allocation":first, "restored_scratch":str(Path.cwd()),
-              "gpu":summary["gpu"]}
+              "gpu":summary["gpu"], "loss_type":summary["loss_type"], "planning_smoke":planning}
     (root/"recovery-check.json").write_text(json.dumps(report, indent=2)+"\n")
     (root/"recovery.complete").touch()
     print(json.dumps(report), flush=True)

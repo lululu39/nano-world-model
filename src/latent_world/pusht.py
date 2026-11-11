@@ -112,8 +112,17 @@ def transfer_context_frames(cfg):
     return context
 
 
+def transfer_loss_type(cfg):
+    """Legacy checkpoints retain MAE; new objectives are explicit resume contracts."""
+    loss_type = cfg.get("loss_type", "mae")
+    if loss_type not in ("mae", "mse"):
+        raise ValueError("PushT prediction loss must be mae or mse")
+    return loss_type
+
+
 def validate_transfer_checkpoint(state, action_stats):
     cfg = state["config"]
+    transfer_loss_type(cfg)
     expected = {"representation":"vjepa21g-256-ln-rowmajor-v1", "context_frames":1,
         "frame_interval":5, "action_dim":10, "state_policy":"zeros", "embodiment_id":2, "view_ids":[0]}
     if any(cfg.get(k) != v for k,v in expected.items()):
@@ -151,6 +160,7 @@ def load_robojepa(weights, robo_repo, vjepa_repo, device, checkpoint=None, actio
         predictor.load_state_dict(trained["model"], strict=True)
         report["finetuned_step"] = trained["step"]
         report["finetuned_run_id"] = trained["run_id"]
+        report["loss_type"] = transfer_loss_type(trained["config"])
     return encoder.to(device).eval(), predictor.to(device), report
 
 
@@ -229,8 +239,12 @@ def prediction_rollout(predictor, initial, actions, context_frames=1):
     return AutoregressiveRollout(context_frames=context_frames)(predictor, initial, actions)
 
 
-def prediction_loss(predictor, z, actions, context_frames=1):
+def prediction_loss(predictor, z, actions, context_frames=1, *, loss_type="mae"):
     """Equal-weight teacher forcing and free rollout, with matched history access."""
+    transfer_loss_type({"loss_type": loss_type})
+    def distance(predicted, target):
+        error = predicted.float() - target
+        return (error.abs() if loss_type == "mae" else error.square()).mean()
     b, t, n, d = z.shape
     if not 1 <= context_frames <= predictor.max_context or actions.shape[:2] != (b, t-1):
         raise ValueError("Prediction history/actions do not fit the training window")
@@ -244,8 +258,9 @@ def prediction_loss(predictor, z, actions, context_frames=1):
     else:
         teacher = torch.cat([predictor.predict_next(z[:, max(0,k+1-context_frames):k+1],
             actions[:, max(0,k+1-context_frames):k+1]) for k in range(t-1)], dim=1)
-    teacher = (teacher.float() - z[:, 1:]).abs().mean()
+    teacher = distance(teacher, z[:, 1:])
     predicted = prediction_rollout(predictor, z[:, :1], actions, context_frames)
-    rollout = torch.stack([(predicted[:, k:k+1].float() - z[:, k+1:k+2]).abs().mean()
+    rollout = torch.stack([distance(predicted[:, k:k+1], z[:, k+1:k+2])
                            for k in range(t-1)]).mean()
-    return (teacher + rollout) / 2, {"teacher_mae":float(teacher.detach()), "rollout_mae":float(rollout.detach())}
+    return (teacher + rollout) / 2, {f"teacher_{loss_type}":float(teacher.detach()),
+                                   f"rollout_{loss_type}":float(rollout.detach())}
