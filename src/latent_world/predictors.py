@@ -68,6 +68,22 @@ class RoboJEPAPredictor(nn.Module):
         self.view_ids = view_ids
         self.frozen = frozen
         self.predictor.requires_grad_(not frozen)
+        self._clear_runtime_cache()
+
+    def _clear_runtime_cache(self):
+        # Upstream prewarms a plain dict on CUDA whenever CUDA is available,
+        # even for a CPU model. These tensors are not registered buffers and
+        # nn.Module.to() cannot move them. Rebuild lazily on the input device.
+        self.predictor.attn_mask_cache.clear()
+        if self.predictor.attn_mask is not None:
+            # Upstream uses this attribute only as an enabled/disabled flag;
+            # forward obtains the actual mask from the shape-indexed cache.
+            self.predictor.attn_mask = torch.empty(0, dtype=torch.bool)
+
+    def _apply(self, fn, recurse=True):
+        result = super()._apply(fn, recurse)
+        self._clear_runtime_cache()
+        return result
 
     def train(self, mode=True):
         super().train(mode)

@@ -80,6 +80,10 @@ def build_model(config):
     predictor = PREDICTORS.build(cfg["predictor"], spec=spec, action_dim=cfg["action_dim"])
     objective = OBJECTIVES.build(cfg["objective"])
     rollout = ROLLOUTS.build(cfg["rollout"])
+    if isinstance(predictor, NanoWMPredictor) != isinstance(objective, NanoWMObjective):
+        raise ValueError("Native NanoWM predictors and native diffusion/flow objectives must be paired")
+    if isinstance(predictor, NanoWMPredictor) and not encoder.frozen:
+        raise ValueError("The native NanoWM comparison currently requires a frozen encoder")
     if rollout.context_frames > predictor.max_context:
         raise ValueError("Rollout context exceeds predictor capacity")
     return LatentWorldModel(encoder, predictor, objective, rollout, target_decay=cfg.get("target_decay", .99))

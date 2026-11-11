@@ -9,12 +9,13 @@ from .contracts import Conditioning
 class AutoregressiveRollout:
     """Roll out H actions to H predictions; never include context in returned targets."""
 
-    def __init__(self, context_frames=1, *, detach_feedback=False, state_policy="required"):
+    def __init__(self, context_frames=1, *, detach_feedback=False, state_policy="required", state_transition=None):
         if context_frames < 1:
             raise ValueError("context_frames must be positive")
         self.context_frames = context_frames
         self.detach_feedback = detach_feedback
         self.state_policy = state_policy
+        self.state_transition = state_transition
 
     def __call__(self, predictor, context, actions, *, history_actions=None, conditioning=None):
         if context.ndim != 4 or context.shape[1] < 1 or actions.ndim != 3 or context.shape[0] != actions.shape[0]:
@@ -45,6 +46,7 @@ class AutoregressiveRollout:
             context = torch.cat([context, feedback], dim=1)[:, -self.context_frames:]
             history_actions = outgoing[:, -(context.shape[1] - 1):] if context.shape[1] > 1 else outgoing[:, :0]
             if c.states is not None and step + 1 < actions.shape[1]:
-                state = advance_state(c.states, current, self.state_policy)
+                state = (self.state_transition(c.states, current) if self.state_transition is not None
+                         else advance_state(c.states, current, self.state_policy))
                 c = replace(c, states=torch.cat([c.states, state], dim=1)[:, -self.context_frames:])
         return torch.cat(predictions, dim=1) if predictions else context[:, :0]

@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from omegaconf import OmegaConf
 
 from .base import LatentCodecConfig, LatentShape
 from .semantic import VJEPA21LatentCodec, WebDINOLatentCodec
 from .sd_vae import SDVAELatentCodec
+
+if TYPE_CHECKING:
+    from diffusers.models import AutoencoderKL
 
 
 def _select(cfg, key: str, default=None):

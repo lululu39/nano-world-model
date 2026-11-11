@@ -183,7 +183,8 @@ Action modules live in `conditioning.py`; replace `action_conditioner` with a
 module using `(tokens,actions) -> tokens` for architecture research. RoboJEPA
 retains its pretrained conditioning and exposes a separate task adapter.
 No future ground-truth state enters rollout. Zero-state and same-coordinate
-delta-state mechanisms are provided; other semantics need an explicit mechanism.
+delta-state mechanisms are provided; pass a custom `state_transition(states, action)`
+callable to the rollout for other semantics.
 
 Actual pretrained CUDA check:
 

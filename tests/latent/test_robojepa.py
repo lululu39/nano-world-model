@@ -29,6 +29,7 @@ def test_real_upstream_predictor_load_and_gradient(source, tmp_path):
     constructor = load_predictor_constructor(source)
     assert all(sys.modules.get(k) is v for k, v in preexisting.items())
     native = constructor(**params)
+    native.attn_mask_cache.clear()  # upstream's eager prewarm follows CUDA availability, not model device
     checkpoint = tmp_path / "tiny.pth.tar"
     config = tmp_path / "config.json"
     torch.save({"predictor": {"module." + k: v for k, v in native.state_dict().items()}}, checkpoint)
