@@ -1,0 +1,24 @@
+{
+  "model": "nanowm",
+  "protocol": "paper_reproduction",
+  "diagnostic_subset": true,
+  "completed": true,
+  "episodes": 2,
+  "requested_episodes": 2,
+  "success_rate": 1.0,
+  "success_count": 2,
+  "success_wilson95": [
+    0.34237195288961925,
+    1.0
+  ],
+  "goal_distance_mean": 120.47113609313965,
+  "goal_distance_definition": "Original PushT seven-dimensional state L2 (mixed position/angle/velocity units)",
+  "planning_latency_seconds": {
+    "median": 31.428686738945544,
+    "p95": 31.432718127779662,
+    "mean": 31.428276079706848,
+    "replans": 4
+  },
+  "latency_scope": "CUDA-synchronized online image encoding plus complete CEM; excludes warmup, simulator/rendering",
+  "paper_protocol_complete": false
+}

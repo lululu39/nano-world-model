@@ -1,0 +1,35 @@
+{
+  "strict": true,
+  "pretrained_predictor_exactly_equal": true,
+  "predictor_tensor_count": 106,
+  "encoder_frozen": true,
+  "action_dim": 10,
+  "embodiment_id": 2,
+  "state_policy": "zeros",
+  "input_size": [
+    256,
+    256
+  ],
+  "token_layout": "view,row,column,channel",
+  "grid": [
+    1,
+    16,
+    16,
+    1664
+  ],
+  "actual_resolution": [
+    256,
+    256
+  ],
+  "preprocessing_verified": true,
+  "spatial_tokens_verified": true,
+  "native_predictor_equivalence": true,
+  "gradient_verified": true,
+  "exact_resume_next_update": true,
+  "relative_actions_match_source_positions": true,
+  "normalized_action_replay_matches_raw": true,
+  "deterministic_algorithms": true,
+  "diagnostic_loss": 0.29696327447891235,
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "peak_bytes": 8317855744
+}
