@@ -31,7 +31,7 @@ cem:
   sigma_min: 0.001
   action_low: null
   action_high: null
-  rollout_batch_size: 16
+  rollout_batch_size: 64
 objective:
   mode: last
   alpha: 1.0
