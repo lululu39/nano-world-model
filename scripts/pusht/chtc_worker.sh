@@ -2,7 +2,8 @@
 set -euo pipefail
 TASK_ROOT="$PWD"
 if [[ -f results.tar ]]; then tar -xf results.tar; fi
-if [[ -f checkpoints.tar ]]; then tar -xf checkpoints.tar; fi
+checkpoint_archive="${PUSHT_CHECKPOINT_ARCHIVE:-checkpoints.tar}"
+if [[ -f "$checkpoint_archive" ]]; then tar -xf "$checkpoint_archive"; fi
 mkdir -p training reports
 archive() {
   status=$?
