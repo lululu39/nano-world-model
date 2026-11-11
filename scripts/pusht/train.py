@@ -26,7 +26,11 @@ def main():
     parser.add_argument("--vjepa-repo", default="vjepa2")
     parser.add_argument("--output", required=True)
     parser.add_argument("--smoke", action="store_true")
+    parser.add_argument("--run-id", default=os.environ.get("PUSHT_RUN_ID"),
+                        help="Persistent job identity, including before the first checkpoint transfer")
     args = parser.parse_args()
+    if args.smoke and args.run_id:
+        raise ValueError("Diagnostic training cannot attach to a formal run identity")
     cfg = OmegaConf.to_container(OmegaConf.load(args.config), resolve=True)
     tcfg = cfg["training"]
     if args.smoke:
@@ -59,18 +63,22 @@ def main():
     optimizer = torch.optim.AdamW([
         {"params":predictor.predictor.parameters(), "lr":tcfg["lr"]},
         {"params":predictor.action_adapter.parameters(), "lr":tcfg["adapter_lr"]}], weight_decay=tcfg["weight_decay"])
-    state = {"step":0, "best":float("inf"), "elapsed":0., "run_id":None if args.smoke else uuid.uuid4().hex[:8]}
+    state = {"step":0, "best":float("inf"), "elapsed":0.,
+             "run_id":None if args.smoke else (args.run_id or uuid.uuid4().hex[:8])}
     latest = output / "latest.pt"
     if latest.exists():
         state = load_checkpoint(latest, model=predictor, optimizer=optimizer, batcher=batcher, config=cfg)
     if args.smoke != (state["run_id"] is None):
         raise ValueError("Diagnostic checkpoints cannot initialize formal training")
+    if args.run_id and state["run_id"] != args.run_id:
+        raise ValueError("Checkpoint run identity disagrees with the submitted job")
     (output / "config.json").write_text(json.dumps(cfg, indent=2))
     (output / "run-id.json").write_text(json.dumps({"run_id":state["run_id"]}))
     tracker = None
     if not args.smoke:
         import wandb
-        tracker = wandb.init(**cfg["logging"], id=state["run_id"], resume="must" if latest.exists() else "never",
+        resume = "must" if latest.exists() else ("allow" if args.run_id else "never")
+        tracker = wandb.init(**cfg["logging"], id=state["run_id"], resume=resume,
                              config=cfg, dir=str(output), mode="online")
         tracker.summary["gpu"] = torch.cuda.get_device_name()
     # Fixed, encoded held-out windows avoid repeated frozen-encoder work during validation.

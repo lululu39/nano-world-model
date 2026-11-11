@@ -121,6 +121,10 @@ worker must archive and persist outputs before propagating that code. Evaluation
 resumes at episode boundaries with per-episode RNG reset; every completed episode
 is saved atomically. Training resumes `latest.pt`, including optimizer and data
 position, under the same configuration and W&B run ID.
+Batch submissions set a persistent `PUSHT_RUN_ID` before first execution, so an
+early eviction before the first checkpoint transfer cannot create a second W&B
+run. Updates since the last durable checkpoint may need deterministic replay;
+only transferred checkpoints provide durable optimizer and data-position state.
 
 `scripts/pusht/chtc_worker.sh` is the batch worker used for the bounded transfer
 and subsequent shared evaluations. Its input archives contain the locked runtime,
