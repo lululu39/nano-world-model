@@ -1,8 +1,10 @@
 # PushT 10% training-window budget
 
-Status: submission authorized on November 11, 2026. The long-run worker and
-checkpoint recovery check are being prepared. This document defines the
-experiment budget, not a result.
+Status: submitted on November 11, 2026. Recovery diagnostic job `8358066.0`
+is queued; formal training has not started. Source snapshot `0e29f14` contains
+the long-run worker and checkpoint recovery check. The bounded controller
+submits one formal run only after that check passes. This document defines
+the experiment budget, not a result.
 
 The denominator is the official NanoWM PushT checkpoint's cumulative training
 window exposure: 100,000 updates, eight GPUs and batch eight per GPU, giving
@@ -16,7 +18,7 @@ The eight-GPU training setup is stated in
 |---|---:|---:|---:|---:|
 | Official NanoWM | 100,000 | 64 | 6,400,000 | 100% |
 | Completed RoboJEPA prefix pilot | 3,000 | 4 | 12,000 | 0.1875% |
-| Proposed RoboJEPA prefix run | 160,000 | 4 | 640,000 | 10% |
+| Authorized RoboJEPA prefix run | 160,000 | 4 | 640,000 | 10% |
 
 The earlier pilot was **0.1875%**, not 0.8%, by this denominator. Window
 presentations are not unique trajectories or unique images. This configuration
@@ -92,3 +94,14 @@ python scripts/pusht/train.py \
 
 The shell must supply the same pinned weights and external-source locations as
 the completed experiment. This example is not a scheduler submission command.
+
+## Submitted execution
+
+The persistent run identity is `854d4fd1` in project `nanowm`, entity
+`yibozhong657-none`. The [W&B run](https://wandb.ai/yibozhong657-none/nanowm/runs/854d4fd1)
+is created only when formal training starts. Diagnostics do not use that run.
+The local execution record is `world-models/jobs/pusht-10pct/state.json`, with
+`controller.log`, held-submission audits and per-phase scheduler logs beside it.
+The controller snapshot and packaged source remain fixed for this execution.
+It stops on failure or the stated training cap and cannot create another formal
+run or enlarge the budget. Actual completion and planning results are pending.
