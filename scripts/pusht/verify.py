@@ -53,6 +53,21 @@ def main():
     transform = dataset.action_transform
     raw = dataset.actions[0,:15].reshape(3,5,2)
     torch.testing.assert_close(transform.unpack(transform.pack(raw))*100, raw, rtol=1e-5, atol=1e-5)
+    # Dataset convention: relative target equals absolute target minus source position.
+    states = torch.load(dataset.root / "states.pth", weights_only=False).float()
+    absolute = torch.load(dataset.root / "abs_actions.pth", weights_only=False).float()
+    torch.testing.assert_close(dataset.actions[0,:15], absolute[0,:15]-states[0,:15,:2], rtol=1e-5, atol=1e-4)
+    velocities = torch.load(dataset.root / "velocities.pth", weights_only=False).float()
+    initial = torch.cat([states[0,0], velocities[0,0]]).numpy()
+    from planning.envs import create_planning_env
+    env = create_planning_env("pusht")
+    env.prepare(42, initial)
+    direct_states = [env.step(a.numpy())[3]["state"] for a in raw.reshape(-1,2)/100]
+    env.prepare(42, initial)
+    roundtrip_states = [env.step(a.numpy())[3]["state"] for a in transform.unpack(transform.pack(raw)).reshape(-1,2)]
+    np.testing.assert_allclose(direct_states, roundtrip_states, rtol=1e-5, atol=1e-4)
+    env.close()
+    del states, absolute, velocities
     optimizer = torch.optim.AdamW(predictor.parameters(), lr=5e-5)
     def update():
         predictor.train(); optimizer.zero_grad(set_to_none=True)
@@ -79,6 +94,7 @@ def main():
         assert all(torch.equal(expected[k], v.cpu()) for k,v in predictor.state_dict().items())
     report.update({"actual_resolution":[256,256], "preprocessing_verified":True, "spatial_tokens_verified":True,
         "native_predictor_equivalence":True, "gradient_verified":True, "exact_resume_next_update":True,
+        "relative_actions_match_source_positions":True, "normalized_action_replay_matches_raw":True,
         "diagnostic_loss":first, "gpu":torch.cuda.get_device_name(), "peak_bytes":torch.cuda.max_memory_allocated()})
     Path(args.output).write_text(json.dumps(report, indent=2))
     print(json.dumps(report), flush=True)
