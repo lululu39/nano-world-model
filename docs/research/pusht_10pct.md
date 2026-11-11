@@ -1,7 +1,8 @@
 # PushT 10% training-window budget
 
-Status: configuration prepared; no job, automation or W&B run has been created
-for this budget. This document defines a proposed experiment, not a result.
+Status: submission authorized on November 11, 2026. The long-run worker and
+checkpoint recovery check are being prepared. This document defines the
+experiment budget, not a result.
 
 The denominator is the official NanoWM PushT checkpoint's cumulative training
 window exposure: 100,000 updates, eight GPUs and batch eight per GPU, giving
@@ -58,19 +59,26 @@ This is an estimate, not a measured long-run throughput result. Queueing,
 input/environment setup, restart initialization, archive transfers and final
 planning evaluation add wall time.
 
-The proposed timed-training cap is 86,400 seconds (24 hours), replacing the
+The authorized timed-training cap is 86,400 seconds (24 hours), replacing the
 pilot's four-hour cap so it cannot silently stop far below the target. If that
 cap is reached before update 160,000, report the actual window count and mark
 the 10% target incomplete; do not infer completion from process exit code zero.
 The existing 1,700-second checkpoint/exit-85 cadence is retained. Persist latest
 and best checkpoints and restore the same full training state after interruptions.
 
-The tensor code, batch size and H200/A100 backend are unchanged and already
-passed the recorded smoke and recovery gates. No additional GPU test is needed
-merely to validate this configuration file. Any worker/controller changes for
-executing the longer budget need their own bounded recovery check before launch.
-In particular, the existing prefix worker/controller hardcodes the pilot config
-and 3,000-step completion: do not submit it unchanged for this configuration.
+The tensor code, batch size and H200/A100 backend are unchanged. The worker now
+accepts `PUSHT_TRAIN_CONFIG=configs/pusht/robojepa22m_prefix_10pct_finetune.yaml`.
+Its `recovery` phase compares eight uninterrupted diagnostic updates with four
+updates followed by an actual Condor exit-85 archive transfer and restart, then
+four more updates. Model, optimizer, RNG, data position and every update metric
+must match exactly. Diagnostics never initialize formal training or create a
+W&B run. Formal execution requires the passing diagnostic marker.
+
+The bounded controller reads the step budget from its experiment state, pins
+resumed training to the GPU model used at startup, and submits the original
+64-goal shared evaluation only after all 160,000 updates complete. Training
+summaries explicitly report `completed`, `target_steps`, `windows_seen` and
+`stop_reason`; hitting the time cap does not count as completing 10%.
 
 The trainer accepts the prepared configuration directly inside the established
 compute-node runtime:

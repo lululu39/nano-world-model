@@ -28,7 +28,7 @@ logging:
   project: nanowm
   entity: yibozhong657-none
   group: nanowm-pusht-robojepa22m-prefix-10pct
-# Prepared configuration only; creating this file does not submit a training job.
+# One authorized run; creating this file alone does not submit a training job.
 # Initialize from official pretrained weights in a new output directory/run.
 # NanoWM reference: 100,000 updates * 8 GPUs * batch 8 = 6,400,000 windows.
 # This target: 160,000 updates * batch 4 = 640,000 windows = 10% of that exposure.

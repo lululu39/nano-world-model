@@ -1,6 +1,7 @@
 """Bounded PushT transfer: frozen encoder, pretrained predictor, minimal action adapter."""
 import argparse
 import json
+import math
 import os
 from pathlib import Path
 import random
@@ -26,11 +27,15 @@ def main():
     parser.add_argument("--vjepa-repo", default="vjepa2")
     parser.add_argument("--output", required=True)
     parser.add_argument("--smoke", action="store_true")
+    parser.add_argument("--checkpoint-after-steps", type=int,
+                        help="Diagnostic-only forced exit 85 for a real process/transfer recovery check")
     parser.add_argument("--run-id", default=os.environ.get("PUSHT_RUN_ID"),
                         help="Persistent job identity, including before the first checkpoint transfer")
     args = parser.parse_args()
     if args.smoke and args.run_id:
         raise ValueError("Diagnostic training cannot attach to a formal run identity")
+    if args.checkpoint_after_steps is not None and (not args.smoke or args.checkpoint_after_steps < 1):
+        raise ValueError("Forced step checkpoints require diagnostic training and a positive step")
     cfg = OmegaConf.to_container(OmegaConf.load(args.config), resolve=True)
     context_frames = transfer_context_frames(cfg)
     tcfg = cfg["training"]
@@ -117,7 +122,8 @@ def main():
             assert all(p.grad is None for p in encoder.parameters())
             optimizer.step(); state["step"] += 1
             row = {"step":state["step"], "train/loss":float(loss.detach()), "grad_norm":float(norm),
-                   "elapsed_seconds":previous_elapsed+time.monotonic()-started, **parts}
+                   "elapsed_seconds":previous_elapsed+time.monotonic()-started,
+                   "windows_seen":state["step"]*tcfg["batch_size"], **parts}
             if state["step"] % tcfg["eval_every"] == 0 or state["step"] == tcfg["steps"]:
                 predictor.eval()
                 with torch.no_grad(), torch.autocast("cuda", dtype=torch.bfloat16):
@@ -137,6 +143,8 @@ def main():
             elapsed = previous_elapsed + time.monotonic()-started
             if elapsed >= tcfg["max_training_seconds"]:
                 save("latest.pt"); code=0; break
+            if args.checkpoint_after_steps == state["step"] and state["step"] < tcfg["steps"]:
+                save("latest.pt"); code=85; break
             if time.monotonic()-started >= tcfg["checkpoint_seconds"] and state["step"] < tcfg["steps"]:
                 save("latest.pt"); code=85; break
         save("latest.pt")
@@ -144,8 +152,13 @@ def main():
         if tracker is not None:
             tracker.finish()
     (output/"summary.json").write_text(json.dumps({"step":state["step"], "run_id":state["run_id"],
-        "elapsed_seconds":previous_elapsed+time.monotonic()-started, "best_dev_loss":state["best"],
-        "diagnostic":args.smoke, "exit_code":code, "gpu":torch.cuda.get_device_name()}, indent=2))
+        "elapsed_seconds":previous_elapsed+time.monotonic()-started,
+        "best_dev_loss":state["best"] if math.isfinite(state["best"]) else None,
+        "diagnostic":args.smoke, "exit_code":code, "gpu":torch.cuda.get_device_name(),
+        "completed":state["step"] == tcfg["steps"], "target_steps":tcfg["steps"],
+        "windows_seen":state["step"]*tcfg["batch_size"],
+        "stop_reason":"target_reached" if state["step"] == tcfg["steps"] else
+                      ("checkpoint" if code == 85 else "time_budget")}, indent=2, allow_nan=False))
     return code
 
 

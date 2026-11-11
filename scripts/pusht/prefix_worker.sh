@@ -2,8 +2,8 @@
 # Bounded prefix-history experiment; diagnostics never initialize formal training.
 set -euo pipefail
 TASK_ROOT="$PWD"
-phase="${PUSHT_PHASE:?Set debug, train or evaluate}"
-case "$phase" in debug|train|evaluate) ;; *) exit 2 ;; esac
+phase="${PUSHT_PHASE:?Set debug, recovery, train or evaluate}"
+case "$phase" in debug|recovery|train|evaluate) ;; *) exit 2 ;; esac
 if [[ -f results.tar ]]; then tar -xf results.tar; fi
 checkpoint_archive="${PUSHT_CHECKPOINT_ARCHIVE:-checkpoints.tar}"
 if [[ -f "$checkpoint_archive" ]]; then tar -xf "$checkpoint_archive"; fi
@@ -17,9 +17,12 @@ archive() {
     deadline=$((SECONDS+3600))
     while [[ ! -f finish-debug ]] && (( SECONDS < deadline )); do sleep 5; done
   fi
-  if [[ "$phase" == train ]]; then
+  if [[ "$phase" == train || "$phase" == recovery ]]; then
     shopt -s nullglob
     files=(training/*.pt)
+    if [[ "$phase" == recovery ]]; then
+      files=(reports/recovery-reference/*.pt reports/recovery-resumed/*.pt)
+    fi
     if (( ${#files[@]} == 0 )); then
       tar -cf checkpoints.tar.tmp --files-from /dev/null || exit 74
     else
@@ -45,18 +48,21 @@ export ROBOJEPA_REPO="$PWD/robo_jepa"
 export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4 TORCHINDUCTOR_COMPILE_THREADS=2
 export SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy TQDM_DISABLE=1 WANDB_MODE=disabled
 PY="$PWD/runtime/.venv/bin/python"
-config=code/configs/pusht/robojepa22m_prefix_finetune.yaml
+config="code/${PUSHT_TRAIN_CONFIG:-configs/pusht/robojepa22m_prefix_finetune.yaml}"
+test -f "$config"
 cp code/SOURCE_VERSION.json reports/source.json
 cp code/uv.lock reports/uv.lock
 touch ready
-if [[ "$phase" == debug ]]; then
+if [[ "$phase" == debug || ( "$phase" == recovery && ! -f reports/pytest.txt ) ]]; then
   "$PY" -m pytest -q code/tests > reports/pytest.txt 2>&1
 fi
 # Validate causal history on each actual training/evaluation GPU before proceeding.
 if [[ ! -f reports/hardware-gate.json ]]; then
   "$PY" code/scripts/pusht/verify.py --assets assets --context-frames 3 --output reports/hardware-gate.json
 fi
-if [[ "$phase" == debug ]]; then
+if [[ "$phase" == recovery ]]; then
+  "$PY" code/scripts/pusht/recovery_smoke.py --config "$config" --assets assets --output reports
+elif [[ "$phase" == debug ]]; then
   "$PY" code/scripts/pusht/train.py --config "$config" --assets assets --output reports/smoke-training --smoke
   "$PY" code/scripts/pusht/evaluate.py --config code/configs/pusht/shared_benchmark.yaml \
     --assets assets --goals goals/pusht-h3-seed42.pt --output reports/smoke-evaluation \
