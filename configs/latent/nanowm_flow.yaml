@@ -1,0 +1,4 @@
+extends: nanowm_diffusion.yaml
+predictor:
+  pred_name: flow
+  zero_terminal_snr: false

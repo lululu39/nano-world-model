@@ -1,0 +1,13 @@
+extends: shared.yaml
+predictor:
+  kind: deterministic
+  hidden_dim: 512
+  depth: 7
+  heads: 4
+  max_context: 8
+  action_mode: additive
+objective:
+  kind: next_latent
+  metric: mae
+  rollout_weight: 1.0
+  rollout_steps: 2

@@ -1,0 +1,32 @@
+seed: 42
+action_dim: 2
+representation:
+  id: synthetic-tiny-patches-only
+  shape: {channels: 8, height: 2, width: 2, views: 1}
+encoder: {kind: tiny, frozen: true}
+predictor:
+  kind: deterministic
+  hidden_dim: 32
+  depth: 2
+  heads: 4
+  max_context: 2
+  action_mode: additive
+objective: {kind: next_latent, metric: mse, rollout_weight: 0.5, rollout_steps: 2}
+rollout: {kind: autoregressive, context_frames: 2, detach_feedback: false, state_policy: required}
+target_decay: 0.99
+protocol:
+  dataset_id: synthetic-smoke
+  action_id: synthetic-units
+  evaluation_id: synthetic-heldout-seeds
+  context_frames: 1
+  horizon: 2
+  comparison: engineering_smoke_only
+data: {manifest: null, frames: 3, stride: 1}
+training: {steps: 4, batch_size: 2, lr: 0.001, encoder_lr: 0.001, weight_decay: 0.01,
+  grad_clip: 1.0, bf16: false, eval_every: 4, checkpoint_seconds: 1800}
+logging: {project: nanochat, entity: yibozhong657-none, mode: online}
+planning:
+  action_low: [-1.0, -1.0]
+  action_high: [1.0, 1.0]
+  execute_steps: 1
+  cem: {horizon: 2, samples: 8, elites: 2, iterations: 2, chunk_size: 4}

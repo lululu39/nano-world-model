@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 from pathlib import Path
 
-from diffusers.models import AutoencoderKL
 from omegaconf import OmegaConf
 
 from .base import LatentCodecConfig, LatentShape
@@ -91,6 +92,8 @@ def resolve_latent_codec_config(cfg) -> LatentCodecConfig:
 
 def load_autoencoder_kl(model_path: str) -> AutoencoderKL:
     """Load AutoencoderKL while preserving the old subfolder='vae' behavior."""
+    from diffusers.models import AutoencoderKL
+
     path = Path(str(model_path))
     if path.is_dir() and (path / "config.json").exists():
         return AutoencoderKL.from_pretrained(str(path))

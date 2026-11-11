@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = "==3.11.*"
 resolution-markers = [
     "platform_machine == 'x86_64' and sys_platform == 'linux'",
@@ -890,6 +890,16 @@ dev = [
     { name = "pip" },
     { name = "pytest" },
 ]
+latent = [
+    { name = "einops" },
+    { name = "huggingface-hub" },
+    { name = "numpy" },
+    { name = "omegaconf" },
+    { name = "timm" },
+    { name = "torch" },
+    { name = "torchvision" },
+    { name = "wandb" },
+]
 
 [package.metadata]
 requires-dist = [
@@ -941,6 +951,16 @@ provides-extras = ["rt1"]
 dev = [
     { name = "pip", specifier = "==25.2" },
     { name = "pytest", specifier = "==8.4.2" },
+]
+latent = [
+    { name = "einops", specifier = "==0.8.1" },
+    { name = "huggingface-hub", specifier = "==0.34.4" },
+    { name = "numpy", specifier = "==1.26.4" },
+    { name = "omegaconf", specifier = "==2.3.0" },
+    { name = "timm", specifier = "==1.0.15" },
+    { name = "torch", specifier = "==2.7.1", index = "https://download.pytorch.org/whl/cu128" },
+    { name = "torchvision", specifier = "==0.22.1", index = "https://download.pytorch.org/whl/cu128" },
+    { name = "wandb", specifier = "==0.21.1" },
 ]
 
 [[package]]

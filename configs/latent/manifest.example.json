@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "dataset_id": "REPLACE_WITH_DATASET_AND_VERSION",
+  "representation_id": "vjepa2.1-G-384-image-bilinear256-imagenet-layernorm-v1",
+  "action_id": "REPLACE_WITH_TRAIN_ONLY_ACTION_STATISTICS_AND_UNITS",
+  "episodes": [
+    {"episode_id": "train-001", "path": "episodes/train-001.pt", "split": "train", "frames": 100},
+    {"episode_id": "val-001", "path": "episodes/val-001.pt", "split": "val", "frames": 100},
+    {"episode_id": "test-001", "path": "episodes/test-001.pt", "split": "test", "frames": 100}
+  ]
+}

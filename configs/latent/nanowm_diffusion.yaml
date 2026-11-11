@@ -1,0 +1,20 @@
+extends: shared.yaml
+predictor:
+  kind: nanowm
+  hidden_dim: 512
+  depth: 7
+  heads: 4
+  frames: ${data.frames}
+  patch_size: 1
+  action_mode: additive
+  pred_name: v
+  diffusion_steps: 1000
+  zero_terminal_snr: true
+  context_frames: ${protocol.context_frames}
+  sampling_steps: 20
+  scheduling: sequential
+  history_stabilization: 0.0
+objective:
+  kind: nanowm
+  timestep_sampling: uniform
+  mode: diffusion_forcing

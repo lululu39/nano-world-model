@@ -1,0 +1,17 @@
+extends: shared.yaml
+predictor:
+  kind: robojepa
+  repo: ${oc.env:ROBOJEPA_REPO}
+  config: ${oc.env:ROBOJEPA_CONFIG}
+  checkpoint: ${oc.env:ROBOJEPA_CHECKPOINT}
+  # A learned task adapter is an adaptation experiment, not zero-shot robotics.
+  action_mode: linear
+  state_policy: zeros
+  embodiment_id: 2  # released franka_omron slot; explicit initialization for adaptation
+  view_ids: [0]
+  frozen: false
+objective:
+  kind: next_latent
+  metric: mae
+  rollout_weight: 1.0
+  rollout_steps: 2

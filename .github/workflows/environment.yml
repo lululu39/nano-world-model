@@ -10,6 +10,27 @@ permissions:
   contents: read
 
 jobs:
+  latent-components:
+    name: Decoder-free latent components
+    runs-on: ubuntu-22.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.0"
+          enable-cache: false
+      - name: Install decoder-free dependencies
+        run: uv sync --locked --only-group latent --only-group dev
+      - name: Stage pinned RoboJEPA source without weights
+        run: |
+          git clone https://github.com/facebookresearch/robo_jepa.git /tmp/robo_jepa
+          git -C /tmp/robo_jepa checkout f93106f5f4a451fd526d51778aa8ab7c852eb824
+      - name: Test components and upstream adapter without decoder dependencies
+        env:
+          ROBOJEPA_REPO: /tmp/robo_jepa
+        run: .venv/bin/python -m pytest tests/latent -q
+
   english-content:
     name: English repository content
     runs-on: ubuntu-22.04

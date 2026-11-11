@@ -1,0 +1,6 @@
+extends: robojepa_frozen.yaml
+encoder:
+  frozen: false
+target_decay: 0.99
+protocol:
+  comparison: encoder_finetuning_ablation

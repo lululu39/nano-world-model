@@ -2,6 +2,14 @@
 <h1>🌍 Nano World Model</h1>
 </div>
 
+This fork adds a modular, decoder-free research path with pretrained RoboJEPA,
+deterministic next-latent prediction, and the original NanoWM diffusion/flow
+backbones in a shared representation. It includes common rollout, CEM/MPC,
+metrics, resumable training, configs and smoke tests. Existing NanoWM commands
+and checkpoints remain supported. Start with the
+[latent research guide](docs/research/latent_world_models.md) and
+[architecture decisions](docs/research/architecture.md).
+
 <div align="center">
 <a href='https://arxiv.org/abs/2605.23993'><img src='https://img.shields.io/badge/arXiv-2605.23993-b31b1b.svg'></a>
 <a href='https://huggingface.co/collections/knightnemo/nano-world-model'><img src='https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Page-blue'></a>
