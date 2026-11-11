@@ -48,7 +48,21 @@ class SDEncoderOnly(nn.Module):
             layers_per_block=cfg["layers_per_block"], act_fn=cfg["act_fn"],
             norm_num_groups=cfg["norm_num_groups"], double_z=True)
         self.quant_conv = nn.Conv2d(2 * cfg["latent_channels"], 2 * cfg["latent_channels"], 1)
-        self.load_state_dict(load_file(str(Path(path) / "encoder.safetensors")), strict=True)
+        weights = load_file(str(Path(path) / "encoder.safetensors"))
+        # The released 2022 diffusers checkpoint predates the attention key rename.
+        # This is the same name-only migration as AutoencoderKL.from_pretrained;
+        # tensor values and shapes are preserved and all final keys remain strict.
+        replacements = {"query": "to_q", "key": "to_k", "value": "to_v", "proj_attn": "to_out.0"}
+        migrated = {}
+        for name, tensor in weights.items():
+            if ".attentions." in name:
+                for old, new in replacements.items():
+                    name = name.replace(f".{old}.", f".{new}.")
+            if name in migrated:
+                raise ValueError("Duplicate key after legacy VAE migration")
+            migrated[name] = tensor
+        self.load_state_dict(migrated, strict=True)
+        assert all(torch.equal(v, migrated[k]) for k,v in self.state_dict().items())
         self.scaling_factor = cfg.get("scaling_factor", 0.18215)
         self.requires_grad_(False).eval()
 
