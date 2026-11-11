@@ -94,6 +94,9 @@ python scripts/pusht/evaluate.py \
   --config configs/pusht/shared_benchmark.yaml --assets assets \
   --goals goals/pusht-h3-seed42.pt --output results/robojepa-shared \
   --model robojepa --checkpoint results/robojepa-train/best.pt
+
+python scripts/pusht/summarize.py --nanowm results/nanowm-shared \
+  --robojepa results/robojepa-shared --output results/comparison
 ```
 
 Paths to RoboJEPA/V-JEPA source and weights can be supplied through the explicit
@@ -118,6 +121,18 @@ worker must archive and persist outputs before propagating that code. Evaluation
 resumes at episode boundaries with per-episode RNG reset; every completed episode
 is saved atomically. Training resumes `latest.pt`, including optimizer and data
 position, under the same configuration and W&B run ID.
+
+`scripts/pusht/chtc_worker.sh` is the batch worker used for the bounded transfer
+and subsequent shared evaluations. Its input archives contain the locked runtime,
+assets, pinned external sources, repository source with `SOURCE_VERSION.json`, and
+the fixed goals. It archives both checkpoints and reports before exit 85; the
+submit description must transfer these archives as checkpoint files. Unexpected
+failures retain the debug allocation for one hour and stop automatic progress.
+The `.netrc` input is encrypted by HTCondor and is excluded from every output.
+Pin the GPU model after the first match so that restored training and timed
+evaluation preserve their recorded hardware. Resume rejects changed provenance.
+The table generator requires complete shared-protocol evaluations, identical
+targets, and matching GPU, runtime, dependencies and asset versions.
 
 ## Initial reported outcomes
 

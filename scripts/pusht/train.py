@@ -47,7 +47,11 @@ def main():
     for name, path in [("source",root),("robojepa",Path(args.robo_repo)),("vjepa",Path(args.vjepa_repo))]:
         metadata = path/"SOURCE_VERSION.json"
         provenance[name] = json.loads(metadata.read_text()) if metadata.exists() else {"path":str(path)}
-    (output/"provenance.json").write_text(json.dumps(provenance, indent=2))
+    provenance_path = output / "provenance.json"
+    if (output / "latest.pt").exists():
+        if not provenance_path.exists() or json.loads(provenance_path.read_text()) != provenance:
+            raise ValueError("Training resume requires the same GPU, sources, assets and runtime")
+    provenance_path.write_text(json.dumps(provenance, indent=2))
     assert not set(train.episodes) & set(val.episodes)
     (output / "split.json").write_text(json.dumps({"train_episodes":train.episodes,
         "validation_episodes":val.episodes, "planning_split":"official val (not used for tuning)"}, indent=2))
