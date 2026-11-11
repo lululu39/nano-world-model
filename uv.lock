@@ -148,6 +148,19 @@ wheels = [
 ]
 
 [[package]]
+name = "cffi"
+version = "2.1.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pycparser", marker = "implementation_name != 'PyPy'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/9e/ef/008a1939e372c06329a3fce4279c02f328488f3526744906eeec3da7ad5f/cffi-2.1.1.tar.gz", hash = "sha256:dd31f52ea1086513bb9df30f8fcee9b8918323ae067a3d5b78bc826a000712be", size = 530807, upload-time = "2026-08-03T21:21:18.939Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f7/a4/4399daaf8f7dfee9d7c3327fdb0426ee041cc63edc358b93911ceb2bfc7a/cffi-2.1.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:34e261f78cb6ceaaa36f42f2613f4380d94d9c759a9c73c769ee6e0247364632", size = 217807, upload-time = "2026-08-03T21:19:36.286Z" },
+    { url = "https://files.pythonhosted.org/packages/b4/c6/ab025d75d2c26c19b087c0124e75ee31cb65032f4fe345d356d8c507ab97/cffi-2.1.1-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:f5cfbc5fe74540d335175b656c725d74d90e3730c626d92575eea35029d9afaa", size = 219408, upload-time = "2026-08-03T21:19:39.809Z" },
+]
+
+[[package]]
 name = "charset-normalizer"
 version = "3.5.1"
 source = { registry = "https://pypi.org/simple" }
@@ -444,6 +457,26 @@ sdist = { url = "https://files.pythonhosted.org/packages/e2/b1/46539f5050d7c316a
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d6/bf/7f0850aa13d98bb4dd8e7633b6beb639e6fd80a8c0813ad36dec3240f70e/grpcio-1.83.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:5cce1d9fe2887239f054dc9c314597e04f33d2e6bd3150a91c4946d7e5be5d98", size = 7083816, upload-time = "2026-08-28T07:07:56.867Z" },
     { url = "https://files.pythonhosted.org/packages/a2/3c/ac8ca4521760c8c5876af2f284109c3f826d3ba9836b2226c76ba06258ee/grpcio-1.83.1-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:e844cdb25c3c93c7572e0a37137c12305efea493be4eb65801b3ee93f180c186", size = 8010270, upload-time = "2026-08-28T07:08:02.949Z" },
+]
+
+[[package]]
+name = "gym"
+version = "0.26.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "cloudpickle" },
+    { name = "gym-notices" },
+    { name = "numpy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ab/b1/eb05a423eb801ab7d0715d6a3b28d92589e30b437052553df19ca2087240/gym-0.26.2.tar.gz", hash = "sha256:e0d882f4b54f0c65f203104c24ab8a38b039f1289986803c7d02cdbe214fbcc4", size = 721689, upload-time = "2022-10-04T23:57:43.247Z" }
+
+[[package]]
+name = "gym-notices"
+version = "0.1.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/a2/4d/035922b950b224ee4b65a9a4550a22eac8985a3f0e1ef42546d9047e7a72/gym_notices-0.1.0.tar.gz", hash = "sha256:9f9477ef68a8c15e42625d4fa53631237e3e6ae947f325b5c149c081499adc1b", size = 3084, upload-time = "2025-07-27T10:12:41.534Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/41/55/55d157aa8693090954fc9639bf27218240517c3bc7afa6e97412da6ebfd9/gym_notices-0.1.0-py3-none-any.whl", hash = "sha256:a943af4446cb619d04fd1e470b9272b4473e08a06d1c7cc9005755a4a0b8c905", size = 3349, upload-time = "2025-07-27T10:12:40.039Z" },
 ]
 
 [[package]]
@@ -880,6 +913,12 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
+pusht = [
+    { name = "gym" },
+    { name = "pygame" },
+    { name = "pymunk" },
+    { name = "shapely" },
+]
 rt1 = [
     { name = "lerobot" },
     { name = "torchcodec" },
@@ -910,6 +949,7 @@ requires-dist = [
     { name = "einops", specifier = "==0.8.1" },
     { name = "eva-decord", specifier = "==0.6.1" },
     { name = "ftfy", specifier = ">=6.2,<7" },
+    { name = "gym", marker = "extra == 'pusht'", specifier = "==0.26.2" },
     { name = "h5py", specifier = ">=3.11" },
     { name = "huggingface-hub", specifier = "==0.34.4" },
     { name = "hydra-core", specifier = "==1.3.2" },
@@ -926,6 +966,8 @@ requires-dist = [
     { name = "pillow", specifier = ">=10,<12" },
     { name = "piqa", specifier = "==1.3.2" },
     { name = "protobuf", specifier = "==4.25.3" },
+    { name = "pygame", marker = "extra == 'pusht'", specifier = "==2.6.1" },
+    { name = "pymunk", marker = "extra == 'pusht'", specifier = "==6.6.0" },
     { name = "pytorch-fid", specifier = "==0.3.0" },
     { name = "pytorch-lightning", specifier = "==1.9.5" },
     { name = "requests", specifier = ">=2.32" },
@@ -935,6 +977,7 @@ requires-dist = [
     { name = "seaborn", specifier = "==0.13.2" },
     { name = "sentencepiece", specifier = ">=0.2,<0.3" },
     { name = "setuptools", specifier = "==80.9.0" },
+    { name = "shapely", marker = "extra == 'pusht'", specifier = "==2.0.7" },
     { name = "tensorboard", specifier = "==2.20.0" },
     { name = "timm", specifier = "==1.0.15" },
     { name = "torch", specifier = "==2.7.1", index = "https://download.pytorch.org/whl/cu128" },
@@ -945,7 +988,7 @@ requires-dist = [
     { name = "transformers", specifier = "==4.51.3" },
     { name = "wandb", specifier = "==0.21.1" },
 ]
-provides-extras = ["rt1"]
+provides-extras = ["pusht", "rt1"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -1295,6 +1338,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pycparser"
+version = "3.12"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/cb/27/eeb9f307bf07060f3d9f9aa0fb8c15b01bdfded0a941e4b2719c7f94cacd/pycparser-3.12.tar.gz", hash = "sha256:f03387877eab82ce01bbdfd0ba7252ee55a90b1c708d5129e2ce915475cf1db6", size = 158785, upload-time = "2026-10-22T13:40:03.56Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b6/ae/315bbeee126a769cbde43cf4908acb4b40408d8bf8bbf334dd7368d8dadf/pycparser-3.12-py3-none-any.whl", hash = "sha256:a076f3f489b39b43ed13563a1dafe42447445bec2e294154ec5c57fcdda4c85e", size = 62600, upload-time = "2026-10-22T13:40:02.021Z" },
+]
+
+[[package]]
 name = "pydantic"
 version = "2.13.5"
 source = { registry = "https://pypi.org/simple" }
@@ -1326,12 +1378,34 @@ wheels = [
 ]
 
 [[package]]
+name = "pygame"
+version = "2.6.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/49/cc/08bba60f00541f62aaa252ce0cfbd60aebd04616c0b9574f755b583e45ae/pygame-2.6.1.tar.gz", hash = "sha256:56fb02ead529cee00d415c3e007f75e0780c655909aaa8e8bf616ee09c9feb1f", size = 14808125, upload-time = "2024-09-29T13:41:34.698Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7a/a1/9ae2852ebd3a7cc7d9ae7ff7919ab983e4a5c1b7a14e840732f23b2b48f6/pygame-2.6.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ce8cc108b92de9b149b344ad2e25eedbe773af0dc41dfb24d1f07f679b558c60", size = 13977107, upload-time = "2024-09-29T11:39:56.831Z" },
+]
+
+[[package]]
 name = "pygments"
 version = "2.21.0"
 source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/49/2e/ced460408999b33da6b31b0021b0f37d329e202d4169aeb164493778f25b/pygments-2.21.0.tar.gz", hash = "sha256:610ca751c9bc2492b38eb9a38a7fbc93edbbb2d7182edaf34e66ae493dee5c8c", size = 5005329, upload-time = "2026-08-17T08:02:48.824Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/71/46/17f022dd3e953bf20a04a028a21ec746d942f8d2af30fa0f124fa0e6a684/pygments-2.21.0-py3-none-any.whl", hash = "sha256:2363c69b61c4a97c838da3b130dcd6468f4848992b21a82f2a63ec34377137d9", size = 1250147, upload-time = "2026-08-17T08:02:44.912Z" },
+]
+
+[[package]]
+name = "pymunk"
+version = "6.6.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "cffi" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/42/a0/fc6557f79f0573e50abd9b8819e1d7b1d75a7f9fc209394a38141b391fae/pymunk-6.6.0.tar.gz", hash = "sha256:89be7b6ba237e313c440edfb99612de59bf119e43976d5c76802907cb7a3911c", size = 2997095, upload-time = "2023-11-02T19:43:24.337Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2d/ec/0f89ac1be3de5af582e7734054cd9f689eff5a13f0c7cbc4f8e80b0a81e6/pymunk-6.6.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9462200c47f3eb344373077dc01384cb16355a982ce0e33571201f3b7ee44487", size = 1048383, upload-time = "2023-11-02T19:41:12.646Z" },
+    { url = "https://files.pythonhosted.org/packages/a6/be/b5d845ac76ad6d14eec06c692561d2ad7b4dc844d9d5b3e4245d3911ae7d/pymunk-6.6.0-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:e4247ede965df39d2fd7ae25e9360762cce61f4d39b95af91d29c1c556c80777", size = 1080768, upload-time = "2023-11-02T19:41:22.233Z" },
 ]
 
 [[package]]
@@ -1597,6 +1671,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/18/5d/3bf57dcd21979b887f014ea83c24ae194cfcd12b9e0fda66b957c69d1fca/setuptools-80.9.0.tar.gz", hash = "sha256:f36b47402ecde768dbfafc46e8e4207b4360c654f1f3bb84475f0a28628fb19c", size = 1319958, upload-time = "2025-05-27T00:56:51.443Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a3/dc/17031897dae0efacfea57dfd3a82fdd2a2aeb58e0ff71b77b87e44edc772/setuptools-80.9.0-py3-none-any.whl", hash = "sha256:062d34222ad13e0cc312a4c02d73f059e86a4acbfbdea8f8f76b28c99f306922", size = 1201486, upload-time = "2025-05-27T00:56:49.664Z" },
+]
+
+[[package]]
+name = "shapely"
+version = "2.0.7"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/21/c0/a911d1fd765d07a2b6769ce155219a281bfbe311584ebe97340d75c5bdb1/shapely-2.0.7.tar.gz", hash = "sha256:28fe2997aab9a9dc026dc6a355d04e85841546b2a5d232ed953e3321ab958ee5", size = 283413, upload-time = "2025-01-31T01:10:20.787Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0b/a5/2c8dbb0f383519771df19164e3bf3a8895d195d2edeab4b6040f176ee28e/shapely-2.0.7-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e6d95703efaa64aaabf278ced641b888fc23d9c6dd71f8215091afd8a26a66e3", size = 2529282, upload-time = "2025-01-31T02:42:39.504Z" },
 ]
 
 [[package]]

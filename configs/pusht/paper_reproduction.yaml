@@ -1,0 +1,39 @@
+# Published: arXiv:2605.23993v1 section 4.4 and Table 4.
+# Unspecified settings below are explicit assumptions, NOT recovered paper values.
+name: paper_reproduction
+paper_success_reference: 0.25
+paper_protocol_complete: false
+paper_url: https://arxiv.org/html/2605.23993v1#S4.SS4
+assumptions:
+  - "64 episodes, seed 42: fixed before observing results; not specified in paper"
+  - "topk 10, sigma floor 0.001, unbounded normalized actions: repository defaults"
+  - "replan every 3 chunks, max 20 chunks: horizon-sized execution and repository step cap"
+  - "250 DDIM steps and sequential scheduling: section 4.1 general evaluation defaults"
+env_name: pusht
+n_evals: 64
+seed: 42
+n_plot_samples: 0
+goal_source: dset
+goal_H: 3
+horizon: 3
+replan_every: 3
+max_episode_steps: 20
+frame_interval: 5
+num_sampling_steps: 250
+scheduling_mode: sequential
+precision: bf16
+cem:
+  num_samples: 64
+  topk: 10
+  opt_steps: 5
+  var_scale: 1.0
+  eval_every: 5
+  sigma_min: 0.001
+  action_low: null
+  action_high: null
+  rollout_batch_size: 16
+objective:
+  mode: last
+  alpha: 1.0
+  base: 2.0
+  visual_metric: mse

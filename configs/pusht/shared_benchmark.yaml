@@ -1,0 +1,10 @@
+extends: paper_reproduction.yaml
+name: shared_benchmark
+# Keep the exact same goals/action budgets/CEM across the two models.
+# The released diffusion baseline uses a practical, explicitly separate sampler.
+num_sampling_steps: 20
+scheduling_mode: full_sequence
+assumptions:
+  - "System comparison with different pretrained representations and pretraining data"
+  - "Same fixed goal file, seed, simulator, 64/10/5 CEM and physical action budget"
+  - "NanoWM uses 20-step full-sequence DDIM; RoboJEPA uses deterministic prediction"
