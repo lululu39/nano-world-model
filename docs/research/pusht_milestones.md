@@ -19,7 +19,9 @@ These differences prevent an assertion that an exact original Table 4 run has
 been recovered. We do not search seeds or change thresholds to obtain 25%.
 
 - `configs/pusht/paper_reproduction.yaml` records the published settings, the
-  general sampling defaults, and every additional assumption. Results are a
+  released planning entrypoint's 20-step full-sequence sampler, and every additional
+  assumption. The application-specific entrypoint takes precedence over the
+  general video-generation defaults. Results are a
   reproduction attempt with incomplete protocol provenance.
 - `configs/pusht/shared_benchmark.yaml` uses the same goals and physical action
   budget, with the explicitly documented 20-step full-sequence diffusion sampler.

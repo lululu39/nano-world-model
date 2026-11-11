@@ -1,0 +1,41 @@
+{
+  "dataset_url": "https://osf.io/download/k2d8w/?view_only=a56a296ce3b24cceaf408383a175ce28",
+  "dataset_bytes": 2785304515,
+  "nanowm": {
+    "model_id": "knightnemo/nanowm-b2-dino-wm-pusht-100k",
+    "revision": "613919a559470a3b551160461627a3c1ac5cc17f"
+  },
+  "vae": {
+    "model_id": "stabilityai/sd-vae-ft-mse",
+    "revision": "31f26fdeee1355a5c34592e401dd41e45d25a493",
+    "encoder_tensor_count": 108
+  },
+  "splits": {
+    "train": {
+      "episodes": 18685,
+      "frames": 2336736
+    },
+    "val": {
+      "episodes": 21,
+      "frames": 2514
+    }
+  },
+  "action_stats": {
+    "mean": [
+      -0.007812565192580223,
+      0.006860686466097832
+    ],
+    "std": [
+      0.2084684818983078,
+      0.20674966275691986
+    ]
+  },
+  "preparation_job": "8313398.0",
+  "exit_code": 0,
+  "actual_python": "3.11.18",
+  "uv_lock": "committed uv.lock with pusht extra",
+  "cpu_contract_tests": {
+    "passed": 3,
+    "failed": 0
+  }
+}

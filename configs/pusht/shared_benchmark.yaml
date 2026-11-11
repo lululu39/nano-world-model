@@ -1,7 +1,8 @@
 extends: paper_reproduction.yaml
 name: shared_benchmark
 # Keep the exact same goals/action budgets/CEM across the two models.
-# The released diffusion baseline uses a practical, explicitly separate sampler.
+# Initially retain the released planner sampler, so NanoWM results can be reused
+# if every numerical setting and the fixed goal artifact agree exactly.
 num_sampling_steps: 20
 scheduling_mode: full_sequence
 assumptions:
