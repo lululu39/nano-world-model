@@ -104,10 +104,17 @@ def main():
         wm = RoboPlanningModel(encoder, predictor)
     write_json(out / "weight-loading.json", load_report)
     root = Path(__file__).resolve().parents[2]
-    write_json(out / "environment.json", {"gpu":torch.cuda.get_device_name(), "torch":torch.__version__,
+    environment = {"gpu":torch.cuda.get_device_name(), "torch":torch.__version__,
         "source":json.loads((root / "SOURCE_VERSION.json").read_text()) if (root / "SOURCE_VERSION.json").exists() else None,
         "dependencies":{d.metadata["Name"]:d.version for d in importlib.metadata.distributions()},
-        "assets":json.loads((assets / "provenance.json").read_text())})
+        "assets":json.loads((assets / "provenance.json").read_text())}
+    environment_path = out / "environment.json"
+    if environment_path.exists():
+        previous = json.loads(environment_path.read_text())
+        for key in ("gpu", "torch", "source", "dependencies", "assets"):
+            if previous[key] != environment[key]:
+                raise ValueError(f"Cannot combine evaluation episodes with changed {key}")
+    write_json(environment_path, environment)
     planner = TimedPlanner(CEMPlanner(wm, create_objective_fn(**cfg.objective), action_dim=10,
         horizon=cfg.horizon, device="cuda", **cfg.cem), cfg.precision)
     # Warm up actual full CEM on a fixed observation. Never execute these actions.
