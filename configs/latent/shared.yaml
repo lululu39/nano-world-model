@@ -44,7 +44,7 @@ training:
   eval_every: 500
   checkpoint_seconds: 1800
 logging:
-  project: nanochat
+  project: nanowm
   entity: yibozhong657-none
   mode: online
 planning:

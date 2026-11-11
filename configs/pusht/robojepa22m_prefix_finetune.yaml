@@ -25,7 +25,7 @@ training:
   max_training_seconds: 14400
   bf16: true
 logging:
-  project: nanochat
+  project: nanowm
   entity: yibozhong657-none
   group: nanowm-pusht-robojepa22m-prefix
 # One matched-budget prefix-context run, initialized from official pretrained weights.

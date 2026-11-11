@@ -15,3 +15,10 @@
   The CI check rejects Chinese/Han text in tracked text files and filenames,
   including JSON-escaped notebook text. Review rendered media for English labels
   as well, since text embedded in images or videos is not covered by that check.
+
+# Experiment tracking
+
+- Future formal NanoWM research runs use W&B project `nanowm`, entity
+  `yibozhong657-none`. Override legacy launcher project names when necessary.
+- Resume an existing run in its original project and with the same run ID.
+  Diagnostic jobs and independent evaluation do not create W&B runs.

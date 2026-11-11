@@ -24,7 +24,7 @@ training:
   max_training_seconds: 14400
   bf16: true
 logging:
-  project: nanochat
+  project: nanowm
   entity: yibozhong657-none
   group: nanowm-pusht-robojepa22m
 # One bounded initial transfer run. No automatic sweep or budget extension.
