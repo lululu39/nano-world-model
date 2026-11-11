@@ -18,6 +18,12 @@
 
 # Experiment tracking
 
+- Run smoke/debug checks and authorized formal training in the same HTCondor
+  job and GPU allocation. On success, start formal training immediately without
+  releasing the GPU and submitting another training job. On failure, stop
+  training and retain a bounded debug session in that allocation. Keep
+  diagnostic weights, RNG, data position and logs separate; initialize formal
+  training from its configured starting state. Diagnostics create no W&B run.
 - Future formal NanoWM research runs use W&B project `nanowm`, entity
   `yibozhong657-none`. Override legacy launcher project names when necessary.
 - Resume an existing run in its original project and with the same run ID.
