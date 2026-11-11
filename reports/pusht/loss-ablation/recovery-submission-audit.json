@@ -1,0 +1,17 @@
+{
+  "ClusterId": 8393873,
+  "ProcId": 0,
+  "JobStatus": 5,
+  "NumJobStarts": 0,
+  "RequestCpus": 4,
+  "RequestMemory": 32768,
+  "RequestDisk": 104857600,
+  "RequestGPUs": 1,
+  "RequireGPUs": "/Expr((GlobalMemoryMb >= 79000) && regexp(\"H200\",DeviceName) &&  !regexp(\"MIG\",DeviceName))/",
+  "TransferInput": "source.tar,goals.tar,robojepa-source.tar,vjepa-source.tar,osdf:///chtc/staging/y/yzhong239/nanowm-research/pusht-runtime-v1.tar,osdf:///chtc/staging/y/yzhong239/nanowm-research/pusht-assets-v1.tar,osdf:///chtc/staging/y/yzhong239/nanowm-research/robojepa-22m-v1.tar,file:///staging/y/yzhong239/gradformer/nanochat-uv-v4.sif",
+  "TransferOutput": "results.tar,checkpoints.tar",
+  "TransferCheckpoint": "results.tar,checkpoints.tar",
+  "SuccessCheckpointExitCode": 85,
+  "ContainerImage": "nanochat-uv-v4.sif",
+  "EncryptInputFiles": null
+}

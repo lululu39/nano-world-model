@@ -1,0 +1,31 @@
+{
+  "status": "recovery_queued",
+  "recorded_at": "2026-11-11T22:01:31Z",
+  "source": "b23027cdf292a28e0648d107593f444bdf506677",
+  "recovery_job": "8393873.0",
+  "run_id": "82312534",
+  "wandb_project": "nanowm",
+  "wandb_name": "pusht-robojepa22m-prefix3-mse-3k-bs4-seed42",
+  "formal_training_started": false,
+  "gpu_smoke_passed": false,
+  "formal_training_budget": {
+    "steps": 3000,
+    "batch_size": 4,
+    "seed": 42,
+    "max_training_seconds": 14400,
+    "windows": 12000
+  },
+  "local_checks": {
+    "stdlib_controller_tests": 5,
+    "stdlib_loss_comparison_tests": 3,
+    "syntax_and_english_checks": true
+  },
+  "automatic_sequence": [
+    "GPU loss, pretrained, action, causal and recovery tests",
+    "Two-goal closed-loop smoke",
+    "One formal MSE training run if all gates pass",
+    "64-goal evaluation at update 3000",
+    "Matched MAE/MSE comparison"
+  ],
+  "failure_policy": "Stop; no automatic budget extension or new formal run."
+}

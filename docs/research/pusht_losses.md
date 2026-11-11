@@ -4,6 +4,14 @@ One additional MSE run is authorized on November 11, 2026. The comparison reuses
 the completed prefix-history MAE experiment; it does not rerun that baseline or
 change the ongoing 160,000-update MAE experiment. Results are pending.
 
+At 22:01 UTC on November 11, recovery/smoke job `8393873.0` is queued for H200.
+Formal training has not started. The bounded controller advances only after all
+GPU gates pass, then runs the single training budget and 64-goal evaluation.
+[Submission evidence](../../reports/pusht/loss-ablation/submission.json) records
+the source version and checks. The reserved W&B run is
+[82312534](https://wandb.ai/yibozhong657-none/nanowm/runs/82312534); it is created
+only when formal training initializes.
+
 The MSE configuration is
 [robojepa22m_prefix_mse_finetune.yaml](../../configs/pusht/robojepa22m_prefix_mse_finetune.yaml).
 Both models start from the same official RoboJEPA-22M cooldown-150k predictor
