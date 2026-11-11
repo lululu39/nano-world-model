@@ -15,6 +15,25 @@ def log(message):
     print(time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), message, flush=True)
 
 
+def verify_recovery_transfer(history, event_log):
+    """Verify checkpoint upload plus final upload, including in-place restarts.
+
+    checkpoint_exit_code restarts the executable in the same sandbox. It need
+    not increase NumJobStarts, which counts execution allocations instead.
+    The separate diagnostic report must still prove exact restored training.
+    """
+    assert history.get('JobStatus') == 4 and history.get('ExitCode') == 0
+    assert history.get('SuccessCheckpointExitCode') == 85
+    files = {name.strip() for name in history.get('TransferCheckpoint', '').split(',')}
+    assert {'results.tar', 'checkpoints.tar'} <= files
+    started = history.get('NumOutputTransferStarts', 0)
+    finished = event_log.count('Finished transferring output files')
+    assert started >= 2 and finished >= 2, 'Checkpoint upload and final upload must both complete'
+    return {'num_job_starts': history.get('NumJobStarts'),
+            'output_transfers_started': started, 'output_transfers_finished': finished,
+            'checkpoint_exit_code': 85, 'checkpoint_and_final_upload_verified': True}
+
+
 class Pipeline:
     def __init__(self, root):
         self.root = Path(root).resolve()
@@ -60,7 +79,7 @@ class Pipeline:
         files += [base + name for name in ['pusht-runtime-v1.tar', 'pusht-assets-v1.tar', 'robojepa-22m-v1.tar']]
         gpu = '(GlobalMemoryMb >= 79000) && regexp("H100|H200", DeviceName) && !regexp("MIG", DeviceName)'
         if phase == 'recovery':
-            # Both diagnostic allocations must have the same numerical backend.
+            # Diagnostic restarts must retain the same numerical backend.
             gpu = '(GlobalMemoryMb >= 79000) && regexp("H200", DeviceName) && !regexp("MIG", DeviceName)'
         elif phase == 'evaluate':
             gpu = '(GlobalMemoryMb >= 39000) && regexp("A100-SXM4-40GB", DeviceName) && !regexp("MIG", DeviceName)'
@@ -140,7 +159,9 @@ queue 1
                 if not history or history[0].get('ExitCode') != 0 or history[0].get('JobStatus') != 4:
                     raise RuntimeError(f'{phase} did not exit successfully; inspect history')
                 ad = history[0]
-                fields = ['ClusterId', 'ProcId', 'JobStatus', 'ExitCode', 'NumJobStarts', 'NumCheckpoints',
+                fields = ['ClusterId', 'ProcId', 'JobStatus', 'ExitCode', 'NumJobStarts',
+                          'NumOutputTransferStarts', 'CheckpointNumber',
+                          'SuccessCheckpointExitCode', 'TransferCheckpoint',
                           'LastRemoteHost', 'AssignedGPUs', 'RemoteWallClockTime']
                 (self.root / phase / 'history.json').write_text(json.dumps({k:ad.get(k) for k in fields}, indent=2)+'\n')
                 return ad
@@ -189,9 +210,12 @@ queue 1
         report = json.loads((recovery / 'reports/recovery-check.json').read_text())
         assert report['full_checkpoint_bitwise_equal'] and report['all_update_metrics_equal']
         assert report['final_step'] == 8 and report['diagnostic'] and not report['wandb_run_created']
-        assert history['NumJobStarts'] >= 2, 'The check must include an actual scheduler restart'
+        event_log = self.root / 'recovery/logs' / f'job.{job.split(".")[0]}.log'
+        transfer = verify_recovery_transfer(history, event_log.read_text())
+        (self.root / 'recovery/transfer-verification.json').write_text(json.dumps(transfer, indent=2)+'\n')
         assert json.loads((recovery / 'reports/source.json').read_text())['commit'] == self.state()['source']
-        self.update(stage='recovery_passed', recovery_result=report, active_jobs=[])
+        self.update(stage='recovery_passed', recovery_result=report, recovery_transfer=transfer,
+                    active_jobs=[], error=None)
         train = self.prepare('train')
         with tarfile.open(train / 'approval.tar', 'w') as archive:
             archive.add(recovery / 'reports/recovery.complete', arcname='approval/debug.complete')
