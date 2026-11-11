@@ -1,0 +1,668 @@
+{
+  "strict": true,
+  "missing_keys": [],
+  "unexpected_keys": [],
+  "weight_shapes": {
+    "action_embedder.mlp.0.bias": [
+      768
+    ],
+    "action_embedder.mlp.0.weight": [
+      768,
+      10
+    ],
+    "action_embedder.mlp.2.bias": [
+      768
+    ],
+    "action_embedder.mlp.2.weight": [
+      768,
+      768
+    ],
+    "blocks.0.adaLN_modulation.1.bias": [
+      4608
+    ],
+    "blocks.0.adaLN_modulation.1.weight": [
+      4608,
+      768
+    ],
+    "blocks.0.attn.k_norm.weight": [
+      64
+    ],
+    "blocks.0.attn.proj.bias": [
+      768
+    ],
+    "blocks.0.attn.proj.weight": [
+      768,
+      768
+    ],
+    "blocks.0.attn.q_norm.weight": [
+      64
+    ],
+    "blocks.0.attn.qkv.bias": [
+      2304
+    ],
+    "blocks.0.attn.qkv.weight": [
+      2304,
+      768
+    ],
+    "blocks.0.mlp.w1.weight": [
+      3072,
+      768
+    ],
+    "blocks.0.mlp.w2.weight": [
+      3072,
+      768
+    ],
+    "blocks.0.mlp.w3.weight": [
+      768,
+      3072
+    ],
+    "blocks.1.adaLN_modulation.1.bias": [
+      4608
+    ],
+    "blocks.1.adaLN_modulation.1.weight": [
+      4608,
+      768
+    ],
+    "blocks.1.attn.k_norm.weight": [
+      64
+    ],
+    "blocks.1.attn.proj.bias": [
+      768
+    ],
+    "blocks.1.attn.proj.weight": [
+      768,
+      768
+    ],
+    "blocks.1.attn.q_norm.weight": [
+      64
+    ],
+    "blocks.1.attn.qkv.bias": [
+      2304
+    ],
+    "blocks.1.attn.qkv.weight": [
+      2304,
+      768
+    ],
+    "blocks.1.mlp.w1.weight": [
+      3072,
+      768
+    ],
+    "blocks.1.mlp.w2.weight": [
+      3072,
+      768
+    ],
+    "blocks.1.mlp.w3.weight": [
+      768,
+      3072
+    ],
+    "blocks.10.adaLN_modulation.1.bias": [
+      4608
+    ],
+    "blocks.10.adaLN_modulation.1.weight": [
+      4608,
+      768
+    ],
+    "blocks.10.attn.k_norm.weight": [
+      64
+    ],
+    "blocks.10.attn.proj.bias": [
+      768
+    ],
+    "blocks.10.attn.proj.weight": [
+      768,
+      768
+    ],
+    "blocks.10.attn.q_norm.weight": [
+      64
+    ],
+    "blocks.10.attn.qkv.bias": [
+      2304
+    ],
+    "blocks.10.attn.qkv.weight": [
+      2304,
+      768
+    ],
+    "blocks.10.mlp.w1.weight": [
+      3072,
+      768
+    ],
+    "blocks.10.mlp.w2.weight": [
+      3072,
+      768
+    ],
+    "blocks.10.mlp.w3.weight": [
+      768,
+      3072
+    ],
+    "blocks.11.adaLN_modulation.1.bias": [
+      4608
+    ],
+    "blocks.11.adaLN_modulation.1.weight": [
+      4608,
+      768
+    ],
+    "blocks.11.attn.k_norm.weight": [
+      64
+    ],
+    "blocks.11.attn.proj.bias": [
+      768
+    ],
+    "blocks.11.attn.proj.weight": [
+      768,
+      768
+    ],
+    "blocks.11.attn.q_norm.weight": [
+      64
+    ],
+    "blocks.11.attn.qkv.bias": [
+      2304
+    ],
+    "blocks.11.attn.qkv.weight": [
+      2304,
+      768
+    ],
+    "blocks.11.mlp.w1.weight": [
+      3072,
+      768
+    ],
+    "blocks.11.mlp.w2.weight": [
+      3072,
+      768
+    ],
+    "blocks.11.mlp.w3.weight": [
+      768,
+      3072
+    ],
+    "blocks.2.adaLN_modulation.1.bias": [
+      4608
+    ],
+    "blocks.2.adaLN_modulation.1.weight": [
+      4608,
+      768
+    ],
+    "blocks.2.attn.k_norm.weight": [
+      64
+    ],
+    "blocks.2.attn.proj.bias": [
+      768
+    ],
+    "blocks.2.attn.proj.weight": [
+      768,
+      768
+    ],
+    "blocks.2.attn.q_norm.weight": [
+      64
+    ],
+    "blocks.2.attn.qkv.bias": [
+      2304
+    ],
+    "blocks.2.attn.qkv.weight": [
+      2304,
+      768
+    ],
+    "blocks.2.mlp.w1.weight": [
+      3072,
+      768
+    ],
+    "blocks.2.mlp.w2.weight": [
+      3072,
+      768
+    ],
+    "blocks.2.mlp.w3.weight": [
+      768,
+      3072
+    ],
+    "blocks.3.adaLN_modulation.1.bias": [
+      4608
+    ],
+    "blocks.3.adaLN_modulation.1.weight": [
+      4608,
+      768
+    ],
+    "blocks.3.attn.k_norm.weight": [
+      64
+    ],
+    "blocks.3.attn.proj.bias": [
+      768
+    ],
+    "blocks.3.attn.proj.weight": [
+      768,
+      768
+    ],
+    "blocks.3.attn.q_norm.weight": [
+      64
+    ],
+    "blocks.3.attn.qkv.bias": [
+      2304
+    ],
+    "blocks.3.attn.qkv.weight": [
+      2304,
+      768
+    ],
+    "blocks.3.mlp.w1.weight": [
+      3072,
+      768
+    ],
+    "blocks.3.mlp.w2.weight": [
+      3072,
+      768
+    ],
+    "blocks.3.mlp.w3.weight": [
+      768,
+      3072
+    ],
+    "blocks.4.adaLN_modulation.1.bias": [
+      4608
+    ],
+    "blocks.4.adaLN_modulation.1.weight": [
+      4608,
+      768
+    ],
+    "blocks.4.attn.k_norm.weight": [
+      64
+    ],
+    "blocks.4.attn.proj.bias": [
+      768
+    ],
+    "blocks.4.attn.proj.weight": [
+      768,
+      768
+    ],
+    "blocks.4.attn.q_norm.weight": [
+      64
+    ],
+    "blocks.4.attn.qkv.bias": [
+      2304
+    ],
+    "blocks.4.attn.qkv.weight": [
+      2304,
+      768
+    ],
+    "blocks.4.mlp.w1.weight": [
+      3072,
+      768
+    ],
+    "blocks.4.mlp.w2.weight": [
+      3072,
+      768
+    ],
+    "blocks.4.mlp.w3.weight": [
+      768,
+      3072
+    ],
+    "blocks.5.adaLN_modulation.1.bias": [
+      4608
+    ],
+    "blocks.5.adaLN_modulation.1.weight": [
+      4608,
+      768
+    ],
+    "blocks.5.attn.k_norm.weight": [
+      64
+    ],
+    "blocks.5.attn.proj.bias": [
+      768
+    ],
+    "blocks.5.attn.proj.weight": [
+      768,
+      768
+    ],
+    "blocks.5.attn.q_norm.weight": [
+      64
+    ],
+    "blocks.5.attn.qkv.bias": [
+      2304
+    ],
+    "blocks.5.attn.qkv.weight": [
+      2304,
+      768
+    ],
+    "blocks.5.mlp.w1.weight": [
+      3072,
+      768
+    ],
+    "blocks.5.mlp.w2.weight": [
+      3072,
+      768
+    ],
+    "blocks.5.mlp.w3.weight": [
+      768,
+      3072
+    ],
+    "blocks.6.adaLN_modulation.1.bias": [
+      4608
+    ],
+    "blocks.6.adaLN_modulation.1.weight": [
+      4608,
+      768
+    ],
+    "blocks.6.attn.k_norm.weight": [
+      64
+    ],
+    "blocks.6.attn.proj.bias": [
+      768
+    ],
+    "blocks.6.attn.proj.weight": [
+      768,
+      768
+    ],
+    "blocks.6.attn.q_norm.weight": [
+      64
+    ],
+    "blocks.6.attn.qkv.bias": [
+      2304
+    ],
+    "blocks.6.attn.qkv.weight": [
+      2304,
+      768
+    ],
+    "blocks.6.mlp.w1.weight": [
+      3072,
+      768
+    ],
+    "blocks.6.mlp.w2.weight": [
+      3072,
+      768
+    ],
+    "blocks.6.mlp.w3.weight": [
+      768,
+      3072
+    ],
+    "blocks.7.adaLN_modulation.1.bias": [
+      4608
+    ],
+    "blocks.7.adaLN_modulation.1.weight": [
+      4608,
+      768
+    ],
+    "blocks.7.attn.k_norm.weight": [
+      64
+    ],
+    "blocks.7.attn.proj.bias": [
+      768
+    ],
+    "blocks.7.attn.proj.weight": [
+      768,
+      768
+    ],
+    "blocks.7.attn.q_norm.weight": [
+      64
+    ],
+    "blocks.7.attn.qkv.bias": [
+      2304
+    ],
+    "blocks.7.attn.qkv.weight": [
+      2304,
+      768
+    ],
+    "blocks.7.mlp.w1.weight": [
+      3072,
+      768
+    ],
+    "blocks.7.mlp.w2.weight": [
+      3072,
+      768
+    ],
+    "blocks.7.mlp.w3.weight": [
+      768,
+      3072
+    ],
+    "blocks.8.adaLN_modulation.1.bias": [
+      4608
+    ],
+    "blocks.8.adaLN_modulation.1.weight": [
+      4608,
+      768
+    ],
+    "blocks.8.attn.k_norm.weight": [
+      64
+    ],
+    "blocks.8.attn.proj.bias": [
+      768
+    ],
+    "blocks.8.attn.proj.weight": [
+      768,
+      768
+    ],
+    "blocks.8.attn.q_norm.weight": [
+      64
+    ],
+    "blocks.8.attn.qkv.bias": [
+      2304
+    ],
+    "blocks.8.attn.qkv.weight": [
+      2304,
+      768
+    ],
+    "blocks.8.mlp.w1.weight": [
+      3072,
+      768
+    ],
+    "blocks.8.mlp.w2.weight": [
+      3072,
+      768
+    ],
+    "blocks.8.mlp.w3.weight": [
+      768,
+      3072
+    ],
+    "blocks.9.adaLN_modulation.1.bias": [
+      4608
+    ],
+    "blocks.9.adaLN_modulation.1.weight": [
+      4608,
+      768
+    ],
+    "blocks.9.attn.k_norm.weight": [
+      64
+    ],
+    "blocks.9.attn.proj.bias": [
+      768
+    ],
+    "blocks.9.attn.proj.weight": [
+      768,
+      768
+    ],
+    "blocks.9.attn.q_norm.weight": [
+      64
+    ],
+    "blocks.9.attn.qkv.bias": [
+      2304
+    ],
+    "blocks.9.attn.qkv.weight": [
+      2304,
+      768
+    ],
+    "blocks.9.mlp.w1.weight": [
+      3072,
+      768
+    ],
+    "blocks.9.mlp.w2.weight": [
+      3072,
+      768
+    ],
+    "blocks.9.mlp.w3.weight": [
+      768,
+      3072
+    ],
+    "final_layer.adaLN_modulation.1.bias": [
+      1536
+    ],
+    "final_layer.adaLN_modulation.1.weight": [
+      1536,
+      768
+    ],
+    "final_layer.linear.bias": [
+      16
+    ],
+    "final_layer.linear.weight": [
+      16,
+      768
+    ],
+    "pos_embed": [
+      1,
+      256,
+      768
+    ],
+    "t_embedder.mlp.0.bias": [
+      768
+    ],
+    "t_embedder.mlp.0.weight": [
+      768,
+      256
+    ],
+    "t_embedder.mlp.2.bias": [
+      768
+    ],
+    "t_embedder.mlp.2.weight": [
+      768,
+      768
+    ],
+    "temp_embed": [
+      1,
+      4,
+      768
+    ],
+    "x_embedder.proj.bias": [
+      768
+    ],
+    "x_embedder.proj.weight": [
+      768,
+      4,
+      2,
+      2
+    ]
+  },
+  "published_config": {
+    "model": {
+      "arch": "NanoWM-B/2",
+      "name": "NanoWM-B-2",
+      "num_frames": 4,
+      "n_context_frames": 1,
+      "scheduling_mode": "sequential",
+      "num_sampling_steps": 250,
+      "use_action": true,
+      "action_injection": {
+        "type": "additive"
+      },
+      "causal": true,
+      "image_size": 256,
+      "latent_size": 32,
+      "extras": 1,
+      "num_classes": 1000
+    },
+    "dataset": {
+      "loader": {
+        "n_rollout": null,
+        "data_path_train": "${dataset_dir}/pusht_noise/train",
+        "data_path_val": "${dataset_dir}/pusht_noise/val",
+        "split_ratio": 0.9,
+        "validation_size": 32,
+        "normalize_state": false,
+        "normalize_action": true,
+        "train_slice_mode": "exhaustive",
+        "val_slice_mode": "exhaustive",
+        "stride": 1,
+        "random_seed": 42,
+        "validation_fixed_subset_path": null,
+        "validation_fixed_subset_size": null,
+        "validation_fixed_subset_seed": 42,
+        "use_relative_actions": true,
+        "action_scale": 100.0,
+        "with_velocity": true,
+        "object_name": null
+      },
+      "name": "pusht",
+      "frame_interval": 5,
+      "spec": {
+        "action_dim": 2
+      }
+    },
+    "experiment": {
+      "name": "train",
+      "tasks": [
+        "training"
+      ],
+      "resume_from_checkpoint": null,
+      "pretrained": null,
+      "training": {
+        "optimizer": {
+          "lr": 0.0001,
+          "weight_decay": 0.01,
+          "lr_warmup_steps": 1000
+        },
+        "max_steps": 100000,
+        "batch_size": 8,
+        "gradient_accumulation": 1,
+        "gradient_clip_norm": 0.1,
+        "gradient_clip_start_step": 20000,
+        "log_every": 100,
+        "val_every_n_steps": 1000,
+        "checkpointing": {
+          "across_timesteps": {
+            "every_n_train_steps": 10000,
+            "save_top_k": -1,
+            "save_on_train_epoch_end": true,
+            "save_weights_only": false,
+            "filename": "{epoch}-{step}"
+          },
+          "latest": {
+            "every_n_train_steps": 1000,
+            "save_top_k": 1,
+            "save_on_train_epoch_end": false,
+            "save_weights_only": false,
+            "filename": "latest-{epoch}-{step}"
+          }
+        }
+      },
+      "evaluation": {
+        "validation_size": 32,
+        "save_videos": true,
+        "metrics": {
+          "evaluate": true,
+          "log_every_n_train_steps": 5000,
+          "buffer_size": 32,
+          "max_batchsize": 2,
+          "i3d_model_path": "${oc.env:PRETRAINED_MODELS_DIR,pretrained_models}/i3d/i3d_torchscript.pt"
+        }
+      },
+      "diffusion": {
+        "noise_schedule": "squaredcos_cap_v2",
+        "diffusion_steps": 1000,
+        "pred_name": "v",
+        "mode": "diffusion_forcing",
+        "snr_gamma": 5.0,
+        "zero_terminal_snr": true,
+        "timestep_sampling": "logit_normal",
+        "logit_normal_mean": 0.0,
+        "logit_normal_std": 1.0,
+        "history_stabilization_level": 0.02
+      },
+      "infra": {
+        "mixed_precision": true,
+        "vae_precision": "fp32",
+        "gradient_checkpointing": false,
+        "num_workers": 8,
+        "compile": true,
+        "seed": 3407
+      }
+    },
+    "dataset_dir": "${oc.env:DATASET_DIR,./data}",
+    "csgo_data_dir": "${oc.env:CSGO_DATA_DIR,./data/csgo}",
+    "vae_model_path": "${oc.env:VAE_MODEL_PATH,stabilityai/sd-vae-ft-mse}",
+    "results_dir": "${oc.env:RESULTS_DIR,./results}",
+    "logger": {
+      "name": "wandb",
+      "save_dir": "${hydra:runtime.output_dir}/tb",
+      "logger_name": "nanowm"
+    },
+    "wandb": {
+      "enabled": true,
+      "entity": "${oc.env:WANDB_ENTITY,null}",
+      "project": "nano-world-model-phase2",
+      "mode": "${oc.env:WANDB_MODE,online}"
+    }
+  },
+  "parameters": 158600464,
+  "decoder_instantiated": false
+}

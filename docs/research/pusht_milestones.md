@@ -150,6 +150,21 @@ requires the completed training checkpoint and never initializes W&B.
 
 ## Initial reported outcomes
 
+The first complete released-checkpoint evaluation is recorded in
+[`reports/pusht/nanowm-official`](../../reports/pusht/nanowm-official): 31/64
+successes (48.4375%), mean original state distance 156.758985, and median/P95
+planning latency 31.409165/31.438681 seconds on an A100-SXM4-40GB. This did not
+reproduce the paper's reported 25%; the missing protocol settings remain explicit
+assumptions. No parameters were changed to match that number. All 64 episode
+records, target states, actual weight/config loading, and runtime versions are
+included.
+
+The real RoboJEPA closed-loop smoke also completed after fixing an external
+namespace collision exposed by importing the NanoWM evaluator first. Full
+regression passed 39 tests with one optional RT-1 skip. Its eight-update diagnostic
+checkpoint reached 0/2 goals, which verifies execution only and is not a benchmark
+result. Formal transfer uses a separate initialization from the released weights.
+
 Only success rate, final goal distance, and planning latency are comparison metrics.
 Success is the original environment criterion: L2 distance over agent and block
 XY coordinates below 20, and wrapped block-angle difference below pi/9. Goal
