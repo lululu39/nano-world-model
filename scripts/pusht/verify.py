@@ -2,6 +2,7 @@
 import argparse
 import copy
 import json
+import os
 from pathlib import Path
 import sys
 import tempfile
@@ -24,6 +25,8 @@ def main():
     p.add_argument("--vjepa-repo", default="vjepa2")
     p.add_argument("--output", required=True)
     args = p.parse_args()
+    os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
+    torch.use_deterministic_algorithms(True)
     torch.set_num_threads(4); torch.manual_seed(42)
     encoder, predictor, report = load_robojepa(args.weights, args.robo_repo, args.vjepa_repo, "cuda")
     dataset = PushTWindows(args.assets, "train")
@@ -91,11 +94,16 @@ def main():
         load_checkpoint(path, model=predictor, optimizer=optimizer, batcher=batcher, config={"diagnostic":True})
         actual_loss = update()
         assert expected_loss == actual_loss
-        assert all(torch.equal(expected[k], v.cpu()) for k,v in predictor.state_dict().items())
+        differences = {k:float((expected[k]-v.cpu()).abs().max()) for k,v in predictor.state_dict().items()
+                       if not torch.equal(expected[k], v.cpu())}
+        print(json.dumps({"resume_loss_equal":expected_loss == actual_loss,
+                          "resume_parameter_differences":differences}), flush=True)
+        assert not differences
     report.update({"actual_resolution":[256,256], "preprocessing_verified":True, "spatial_tokens_verified":True,
         "native_predictor_equivalence":True, "gradient_verified":True, "exact_resume_next_update":True,
         "relative_actions_match_source_positions":True, "normalized_action_replay_matches_raw":True,
-        "diagnostic_loss":first, "gpu":torch.cuda.get_device_name(), "peak_bytes":torch.cuda.max_memory_allocated()})
+        "deterministic_algorithms":True, "diagnostic_loss":first, "gpu":torch.cuda.get_device_name(),
+        "peak_bytes":torch.cuda.max_memory_allocated()})
     Path(args.output).write_text(json.dumps(report, indent=2))
     print(json.dumps(report), flush=True)
 

@@ -107,6 +107,12 @@ online to avoid an unbounded multi-hundred-GB feature cache. Only trainable mode
 weights, optimizer, batch order, RNG, and run identity are checkpointed. The frozen
 encoder is restored from the separately pinned pretrained artifact.
 
+Training enables deterministic PyTorch algorithms and the cuBLAS workspace policy.
+The actual 256-resolution pretrained gate found a maximum 6.23e-7 parameter
+difference after resume with the default nondeterministic GPU backward kernels,
+despite identical loss. Enabling deterministic algorithms restored bitwise-identical
+next-update parameters; the acceptance criterion was not relaxed.
+
 Training and evaluation return 85 when a persistence boundary is reached. The
 worker must archive and persist outputs before propagating that code. Evaluation
 resumes at episode boundaries with per-episode RNG reset; every completed episode

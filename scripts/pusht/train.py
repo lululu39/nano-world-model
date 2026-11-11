@@ -1,6 +1,7 @@
 """Bounded PushT transfer: frozen encoder, pretrained predictor, minimal action adapter."""
 import argparse
 import json
+import os
 from pathlib import Path
 import random
 import sys
@@ -30,6 +31,8 @@ def main():
     tcfg = cfg["training"]
     if args.smoke:
         tcfg.update(steps=8, eval_every=8, validation_windows=4)
+    os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
+    torch.use_deterministic_algorithms(cfg["deterministic_algorithms"])
     torch.set_num_threads(4)
     random.seed(cfg["seed"]); np.random.seed(cfg["seed"]); torch.manual_seed(cfg["seed"])
     output = Path(args.output); output.mkdir(parents=True, exist_ok=True)

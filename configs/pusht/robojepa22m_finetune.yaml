@@ -1,5 +1,6 @@
 representation: vjepa21g-256-ln-rowmajor-v1
 seed: 42
+deterministic_algorithms: true
 frames: 4
 context_frames: 1
 frame_interval: 5
