@@ -14,7 +14,7 @@ from omegaconf import OmegaConf
 import torch
 from latent_world.checkpoint import save_checkpoint, load_checkpoint
 from latent_world.data import StatefulBatcher, collate_sequences
-from latent_world.pusht import load_robojepa, PushTWindows, prediction_loss
+from latent_world.pusht import load_robojepa, PushTWindows, prediction_loss, transfer_context_frames
 
 
 def main():
@@ -32,6 +32,7 @@ def main():
     if args.smoke and args.run_id:
         raise ValueError("Diagnostic training cannot attach to a formal run identity")
     cfg = OmegaConf.to_container(OmegaConf.load(args.config), resolve=True)
+    context_frames = transfer_context_frames(cfg)
     tcfg = cfg["training"]
     if args.smoke:
         tcfg.update(steps=8, eval_every=8, validation_windows=4)
@@ -41,6 +42,7 @@ def main():
     random.seed(cfg["seed"]); np.random.seed(cfg["seed"]); torch.manual_seed(cfg["seed"])
     output = Path(args.output); output.mkdir(parents=True, exist_ok=True)
     encoder, predictor, report = load_robojepa(args.weights, args.robo_repo, args.vjepa_repo, "cuda")
+    report["rollout_context_frames"] = context_frames
     (output / "pretrained-loading.json").write_text(json.dumps(report, indent=2))
     train = PushTWindows(args.assets, "train", cfg["frames"], cfg["seed"])
     val = PushTWindows(args.assets, "val", cfg["frames"], cfg["seed"])
@@ -107,7 +109,7 @@ def main():
             for group, base in zip(optimizer.param_groups, [tcfg["lr"], tcfg["adapter_lr"]]):
                 group["lr"] = base * warmup
             with torch.autocast("cuda", dtype=torch.bfloat16):
-                loss, parts = prediction_loss(predictor, z, batch.actions)
+                loss, parts = prediction_loss(predictor, z, batch.actions, context_frames)
             if not torch.isfinite(loss):
                 raise FloatingPointError("Nonfinite latent prediction loss")
             loss.backward()
@@ -119,7 +121,7 @@ def main():
             if state["step"] % tcfg["eval_every"] == 0 or state["step"] == tcfg["steps"]:
                 predictor.eval()
                 with torch.no_grad(), torch.autocast("cuda", dtype=torch.bfloat16):
-                    values = [float(prediction_loss(predictor, z.cuda(), a.cuda())[0]) for z,a in validation]
+                    values = [float(prediction_loss(predictor, z.cuda(), a.cuda(), context_frames)[0]) for z,a in validation]
                 row["dev/loss"] = float(np.mean(values))
                 if not np.isfinite(row["dev/loss"]):
                     raise FloatingPointError("Nonfinite validation loss")

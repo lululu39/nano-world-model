@@ -12,7 +12,7 @@ import numpy as np
 import torch
 from torch.nn import functional as F
 from torchvision.transforms.functional import resize
-from latent_world.pusht import load_robojepa, PushTWindows, prediction_loss, PushTActions
+from latent_world.pusht import load_robojepa, PushTWindows, prediction_loss, prediction_rollout, PushTActions
 from latent_world.data import StatefulBatcher
 from latent_world.checkpoint import save_checkpoint, load_checkpoint
 
@@ -24,6 +24,7 @@ def main():
     p.add_argument("--robo-repo", default="robo_jepa")
     p.add_argument("--vjepa-repo", default="vjepa2")
     p.add_argument("--output", required=True)
+    p.add_argument("--context-frames", type=int, default=1)
     args = p.parse_args()
     os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
     torch.use_deterministic_algorithms(True)
@@ -52,6 +53,38 @@ def main():
             embodiment_ids=torch.tensor([2], device="cuda"), view_map=torch.tensor([[0]], device="cuda"))
         adapted = predictor(z[:, :1], batch.actions[:, :1])
         torch.testing.assert_close(direct.reshape_as(adapted), adapted, rtol=0, atol=0)
+    if args.context_frames > 1:
+        # Check the actual released attention implementation, not a surrogate mask.
+        predictor.eval()
+        with torch.no_grad():
+            inputs, actions = z[:, :-1].float(), batch.actions.float()
+            parallel = predictor(inputs, actions)
+            prefixes = torch.cat([predictor.predict_next(inputs[:, :k+1], actions[:, :k+1])
+                                  for k in range(3)], dim=1)
+            torch.testing.assert_close(parallel, prefixes, rtol=1e-4, atol=2e-5)
+            changed_z, changed_a = inputs.clone(), actions.clone()
+            changed_z[:, 1:] += torch.randn_like(changed_z[:, 1:])
+            changed_a[:, 1:] += 3
+            causal = predictor(changed_z, changed_a)
+            torch.testing.assert_close(parallel[:, :1], causal[:, :1], rtol=0, atol=0)
+            changed_z = inputs.clone()
+            changed_z[:, :1] += torch.randn_like(changed_z[:, :1])
+            history_delta = float((predictor(changed_z, actions)[:, -1:] - parallel[:, -1:]).abs().max())
+            assert history_delta > 1e-6, "Predictor ignored the earlier history"
+            changed_a = actions.clone(); changed_a[:, :1] += 3
+            action_delta = float((predictor(inputs, changed_a)[:, -1:] - parallel[:, -1:]).abs().max())
+            assert action_delta > 1e-6, "Predictor ignored historical actions"
+            # Independent growing-prefix reference checks rollout order and feedback.
+            prefix = z[:, :1].float()
+            expected_rollout = []
+            for k in range(3):
+                nxt = predictor.predict_next(prefix, actions[:, :k+1])
+                expected_rollout.append(nxt); prefix = torch.cat([prefix, nxt], dim=1)
+            torch.testing.assert_close(prediction_rollout(predictor, z[:, :1].float(), actions, 3),
+                                       torch.cat(expected_rollout, 1), rtol=0, atol=0)
+        report.update({"prefix_teacher_equivalence":True, "future_inputs_cannot_change_past":True,
+                       "history_feature_max_delta":history_delta, "history_action_max_delta":action_delta,
+                       "predicted_prefix_action_alignment":True})
     # Real action chunk round trip, including simulator's own x100 conversion.
     transform = dataset.action_transform
     raw = dataset.actions[0,:15].reshape(3,5,2)
@@ -75,7 +108,7 @@ def main():
     def update():
         predictor.train(); optimizer.zero_grad(set_to_none=True)
         with torch.autocast("cuda", dtype=torch.bfloat16):
-            loss, _ = prediction_loss(predictor, z, batch.actions)
+            loss, _ = prediction_loss(predictor, z, batch.actions, args.context_frames)
         loss.backward()
         assert torch.isfinite(loss)
         assert all(v.grad is None for v in encoder.parameters())
@@ -103,7 +136,7 @@ def main():
         "native_predictor_equivalence":True, "gradient_verified":True, "exact_resume_next_update":True,
         "relative_actions_match_source_positions":True, "normalized_action_replay_matches_raw":True,
         "deterministic_algorithms":True, "diagnostic_loss":first, "gpu":torch.cuda.get_device_name(),
-        "peak_bytes":torch.cuda.max_memory_allocated()})
+        "peak_bytes":torch.cuda.max_memory_allocated(), "rollout_context_frames":args.context_frames})
     Path(args.output).write_text(json.dumps(report, indent=2))
     print(json.dumps(report), flush=True)
 

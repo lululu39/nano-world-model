@@ -104,6 +104,14 @@ def load_nanowm(assets, protocol, device):
     return DiffusionWorldModel(model, codec, process, cfg), cfg, report
 
 
+def transfer_context_frames(cfg):
+    """Observed context stays one frame; prediction history is a separate contract."""
+    context = cfg.get("rollout_context_frames", 1)
+    if type(context) is not int or not 1 <= context <= min(8, cfg.get("frames", 4) - 1):
+        raise ValueError("Invalid rollout_context_frames for the released predictor/training clip")
+    return context
+
+
 def validate_transfer_checkpoint(state, action_stats):
     cfg = state["config"]
     expected = {"representation":"vjepa21g-256-ln-rowmajor-v1", "context_frames":1,
@@ -113,6 +121,7 @@ def validate_transfer_checkpoint(state, action_stats):
     actual = {k:torch.as_tensor(v).tolist() for k,v in action_stats.items()}
     if cfg.get("action_statistics") != actual:
         raise ValueError("Fine-tuned checkpoint action normalization differs from the benchmark")
+    return transfer_context_frames(cfg)
 
 
 def load_robojepa(weights, robo_repo, vjepa_repo, device, checkpoint=None, action_stats=None):
@@ -131,22 +140,25 @@ def load_robojepa(weights, robo_repo, vjepa_repo, device, checkpoint=None, actio
     assert all(torch.equal(v, state[k]) for k,v in predictor.predictor.state_dict().items())
     report = {"strict": True, "pretrained_predictor_exactly_equal": True, "predictor_tensor_count": len(state),
               "encoder_frozen": True, "action_dim": 10, "embodiment_id": 2, "state_policy": "zeros",
-              "input_size": [256,256], "token_layout": "view,row,column,channel", "grid": [1,16,16,1664]}
+              "input_size": [256,256], "token_layout": "view,row,column,channel", "grid": [1,16,16,1664],
+              "rollout_context_frames": 1}
     del state, source
     if checkpoint:
         trained = torch.load(checkpoint, map_location="cpu", weights_only=False)
         if action_stats is None:
             raise ValueError("Benchmark action statistics are required for checkpoint compatibility")
-        validate_transfer_checkpoint(trained, action_stats)
+        report["rollout_context_frames"] = validate_transfer_checkpoint(trained, action_stats)
         predictor.load_state_dict(trained["model"], strict=True)
         report["finetuned_step"] = trained["step"]
+        report["finetuned_run_id"] = trained["run_id"]
     return encoder.to(device).eval(), predictor.to(device), report
 
 
 class RoboPlanningModel:
-    """Use the original CEM interface and a one-frame autoregressive context."""
-    def __init__(self, encoder, predictor):
+    """One observed frame, with checkpoint-defined predicted history inside CEM."""
+    def __init__(self, encoder, predictor, *, context_frames=1):
         self.encoder, self.predictor = encoder.eval(), predictor.eval()
+        self.context_frames = context_frames
         self.context = None
 
     @torch.no_grad()
@@ -165,11 +177,8 @@ class RoboPlanningModel:
         if self.context is None:
             raise RuntimeError("Call prepare_context before CEM")
         z = self.context.expand(act.shape[0], -1, -1, -1)
-        frames = [z]
-        for t in range(act.shape[1]):
-            z = self.predictor.predict_next(z, act[:, t:t+1])
-            frames.append(z)
-        return {"visual": torch.cat(frames, dim=1).flatten(2), "proprio": None}, None
+        predicted = prediction_rollout(self.predictor, z, act, self.context_frames)
+        return {"visual": torch.cat([z, predicted], dim=1).flatten(2), "proprio": None}, None
 
 
 class PushTWindows:
@@ -214,15 +223,29 @@ class PushTWindows:
         return {"observations":images.unsqueeze(1), "actions":self.action_transform.pack(actions)}
 
 
-def prediction_loss(predictor, z, actions):
-    """One-frame-context teacher forcing and three-step free rollout, feature MAE only."""
+def prediction_rollout(predictor, initial, actions, context_frames=1):
+    """The same causal prediction/history/action alignment in training and planning."""
+    from .rollout import AutoregressiveRollout
+    return AutoregressiveRollout(context_frames=context_frames)(predictor, initial, actions)
+
+
+def prediction_loss(predictor, z, actions, context_frames=1):
+    """Equal-weight teacher forcing and free rollout, with matched history access."""
     b, t, n, d = z.shape
-    teacher = predictor(z[:, :-1].reshape(b*(t-1),1,n,d), actions.reshape(b*(t-1),1,10))
-    teacher = (teacher.reshape(b,t-1,n,d).float() - z[:, 1:]).abs().mean()
-    current = z[:, :1]
-    losses = []
-    for k in range(t-1):
-        current = predictor.predict_next(current, actions[:, k:k+1])
-        losses.append((current.float() - z[:, k+1:k+2]).abs().mean())
-    rollout = torch.stack(losses).mean()
+    if not 1 <= context_frames <= predictor.max_context or actions.shape[:2] != (b, t-1):
+        raise ValueError("Prediction history/actions do not fit the training window")
+    if context_frames == 1:
+        # Preserve the original single-frame training path for old configurations.
+        teacher = predictor(z[:, :-1].reshape(b*(t-1),1,n,d), actions.reshape(b*(t-1),1,10))
+        teacher = teacher.reshape(b,t-1,n,d)
+    elif context_frames >= t - 1:
+        # Upstream causal masking makes each output depend only on its prefix.
+        teacher = predictor(z[:, :-1], actions)
+    else:
+        teacher = torch.cat([predictor.predict_next(z[:, max(0,k+1-context_frames):k+1],
+            actions[:, max(0,k+1-context_frames):k+1]) for k in range(t-1)], dim=1)
+    teacher = (teacher.float() - z[:, 1:]).abs().mean()
+    predicted = prediction_rollout(predictor, z[:, :1], actions, context_frames)
+    rollout = torch.stack([(predicted[:, k:k+1].float() - z[:, k+1:k+2]).abs().mean()
+                           for k in range(t-1)]).mean()
     return (teacher + rollout) / 2, {"teacher_mae":float(teacher.detach()), "rollout_mae":float(rollout.detach())}

@@ -101,7 +101,14 @@ def main():
             raise ValueError("RoboJEPA benchmark requires the fine-tuned checkpoint")
         encoder, predictor, load_report = load_robojepa(args.weights, args.robo_repo, args.vjepa_repo,
                                                        "cuda", args.checkpoint, action_stats=stats)
-        wm = RoboPlanningModel(encoder, predictor)
+        wm = RoboPlanningModel(encoder, predictor, context_frames=load_report["rollout_context_frames"])
+    if (out / "weight-loading.json").exists() and args.model == "robojepa":
+        previous = json.loads((out / "weight-loading.json").read_text())
+        for key in ("finetuned_step", "finetuned_run_id", "rollout_context_frames"):
+            if key == "finetuned_run_id" and key not in previous:
+                continue  # Older reports did not record the training identity.
+            if previous.get(key, 1 if key == "rollout_context_frames" else None) != load_report.get(key):
+                raise ValueError(f"Cannot resume evaluation with changed checkpoint {key}")
     write_json(out / "weight-loading.json", load_report)
     root = Path(__file__).resolve().parents[2]
     environment = {"gpu":torch.cuda.get_device_name(), "torch":torch.__version__,
