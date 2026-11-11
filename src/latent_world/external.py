@@ -3,6 +3,8 @@
 from contextlib import contextmanager
 from pathlib import Path
 import importlib
+from importlib.machinery import ModuleSpec
+from importlib.util import module_from_spec
 import sys
 import threading
 
@@ -23,6 +25,15 @@ def upstream_imports(repo):
             del sys.modules[k]
         sys.path.insert(0, str(repo))
         try:
+            # Namespace packages otherwise merge every matching sys.path entry.
+            # NanoWM's regular src.utils package can then override V-JEPA's
+            # namespace src.utils, even with the upstream root inserted first.
+            for prefix in prefixes:
+                directory = repo / prefix
+                if directory.is_dir() and not (directory / "__init__.py").exists():
+                    spec = ModuleSpec(prefix, loader=None, is_package=True)
+                    spec.submodule_search_locations = [str(directory)]
+                    sys.modules[prefix] = module_from_spec(spec)
             yield
         finally:
             for k in list(sys.modules):
