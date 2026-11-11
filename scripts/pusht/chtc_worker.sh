@@ -38,22 +38,29 @@ tar -xf goals.tar
 export PYTHONPATH="$PWD/code/src" PYTHONUNBUFFERED=1
 export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4 TORCHINDUCTOR_COMPILE_THREADS=2
 export SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy TQDM_DISABLE=1
-export NETRC="$TASK_ROOT/.netrc" WANDB_MODE=online
-chmod 600 "$NETRC"
+phase="${PUSHT_PHASE:-all}"
+if [[ "$phase" != all && "$phase" != train && "$phase" != evaluate ]]; then exit 2; fi
+export WANDB_MODE=disabled
+if [[ "$phase" != evaluate ]]; then
+  export NETRC="$TASK_ROOT/.netrc" WANDB_MODE=online
+  chmod 600 "$NETRC"
+fi
 cp code/SOURCE_VERSION.json reports/source.json
 cp code/uv.lock reports/uv.lock
 PY="$PWD/runtime/.venv/bin/python"
 # A new GPU family gets a bounded actual-model gate before any formal update.
-if [[ ! -f reports/hardware-gate.json ]]; then
+if [[ "$phase" != evaluate && ! -f reports/hardware-gate.json ]]; then
   "$PY" code/scripts/pusht/verify.py --assets assets --output reports/hardware-gate.json
 fi
 train_complete=false
 if [[ -f training/summary.json ]]; then
   train_complete=$("$PY" -c 'import json; s=json.load(open("training/summary.json")); print(str(s["exit_code"] == 0).lower())')
 fi
-if [[ "$train_complete" != true ]]; then
+if [[ "$phase" != evaluate && "$train_complete" != true ]]; then
   "$PY" code/scripts/pusht/train.py --config code/configs/pusht/robojepa22m_finetune.yaml --assets assets --output training
 fi
+if [[ "$phase" == train ]]; then exit 0; fi
+if [[ ! -f training/best.pt ]]; then echo 'Missing trained checkpoint' >&2; exit 2; fi
 export WANDB_MODE=disabled
 for model in nanowm robojepa; do
   output="reports/$model-shared"

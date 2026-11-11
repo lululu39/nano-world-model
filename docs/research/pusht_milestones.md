@@ -134,6 +134,16 @@ evaluation preserve their recorded hardware. Resume rejects changed provenance.
 The table generator requires complete shared-protocol evaluations, identical
 targets, and matching GPU, runtime, dependencies and asset versions.
 
+When the two evaluation configs have identical numerical settings, use
+`scripts/pusht/reuse_nanowm.py` to reuse the complete paper-protocol evaluation in
+the shared table. It compares every setting except the name and explanatory
+assumptions, preserves the original evidence and writes an explicit reuse record.
+RoboJEPA is then evaluated on the same GPU model and runtime as that NanoWM run;
+its training GPU may differ. This avoids repeating an identical baseline solely
+to change its protocol label. Batch phases `PUSHT_PHASE=train` and
+`PUSHT_PHASE=evaluate` support these separate allocations; the evaluation phase
+requires the completed training checkpoint and never initializes W&B.
+
 ## Initial reported outcomes
 
 Only success rate, final goal distance, and planning latency are comparison metrics.
