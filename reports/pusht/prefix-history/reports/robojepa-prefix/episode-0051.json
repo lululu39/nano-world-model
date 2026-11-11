@@ -1,0 +1,26 @@
+{
+  "episode": 51,
+  "seed": 93,
+  "success": 1.0,
+  "state_dist": 186.2760009765625,
+  "xy_dist": 17.40607261657715,
+  "pos4_dist": 19.725738525390625,
+  "angle_dist": 0.014231979846954346,
+  "n_steps": 30,
+  "success_step": 6,
+  "goal_meta": {
+    "source": "dset",
+    "episode": 51,
+    "seed": 93,
+    "val_path": "/var/lib/condor/execute/slot3/dir_3399414/scratch/assets/data/pusht_noise/val",
+    "traj_id": 20,
+    "offset": 127,
+    "traj_len": 16,
+    "frame_interval": 5,
+    "goal_H": 3
+  },
+  "planning_seconds": [
+    1.0689991042017937,
+    1.0676132794469595
+  ]
+}

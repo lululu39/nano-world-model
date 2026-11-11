@@ -1,0 +1,56 @@
+{
+  "source": {
+    "commit": "e21cc3fe7dda3d55f4bc7fc0a94974f88e417b70",
+    "dirty": false
+  },
+  "jobs": {
+    "debug": {
+      "ClusterId": 8333814,
+      "ProcId": 0,
+      "ExitCode": 0,
+      "JobStatus": 4,
+      "NumJobStarts": 1,
+      "RemoteHost": null,
+      "LastRemoteHost": "slot3_4@hsharma-chtcgpu4000.chtc.wisc.edu",
+      "GPUs_DeviceName": null,
+      "AssignedGPUs": "GPU-ca5be3f8",
+      "RemoteWallClockTime": 287.0
+    },
+    "train": {
+      "ClusterId": 8334783,
+      "ProcId": 0,
+      "ExitCode": 0,
+      "JobStatus": 4,
+      "NumJobStarts": 1,
+      "RemoteHost": null,
+      "LastRemoteHost": "slot3_4@hsharma-chtcgpu4000.chtc.wisc.edu",
+      "GPUs_DeviceName": null,
+      "AssignedGPUs": "GPU-ca5be3f8",
+      "RemoteWallClockTime": 1305.0
+    },
+    "evaluate": {
+      "ClusterId": 8340370,
+      "ProcId": 0,
+      "ExitCode": 0,
+      "JobStatus": 4,
+      "NumJobStarts": 1,
+      "RemoteHost": null,
+      "LastRemoteHost": "slot2_4@gpulab2005.chtc.wisc.edu",
+      "GPUs_DeviceName": null,
+      "AssignedGPUs": "GPU-fb408d80",
+      "RemoteWallClockTime": 603.0
+    }
+  },
+  "controller_completed": true,
+  "formal_run_id": "2b32b1fd",
+  "formal_wandb_project": "nanochat",
+  "future_wandb_project": "nanowm",
+  "checkpoint_archive": "/staging/y/yzhong239/nanowm-research/pusht-robojepa22m-prefix-seed42-checkpoints-v1.tar",
+  "goals_artifact": "/home/yzhong239/world-models/jobs/pusht-train/goals.tar",
+  "unchanged_original_planner_environment": true,
+  "unchanged_encoder_predictor_and_data_sampler": true,
+  "latency_hardware": "Same A100-SXM4-40GB model and runtime, different physical GPU from the original comparison",
+  "baseline_evaluation_gpu": "GPU-20e62ffc on gpulab2004",
+  "prefix_evaluation_gpu": "GPU-fb408d80 on gpulab2005",
+  "additional_formal_runs_authorized": false
+}

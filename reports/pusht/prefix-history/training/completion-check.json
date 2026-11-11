@@ -1,0 +1,13 @@
+{
+  "training_complete": true,
+  "finite_updates": 3000,
+  "best_dev_step": 3000,
+  "best_dev_loss": 0.09438244858756661,
+  "previous_best_dev_loss": 0.09553590649738908,
+  "relative_dev_loss_reduction": 0.012073553830297179,
+  "elapsed_seconds": 1146.3891414366663,
+  "checkpoint_bytes": 644239360,
+  "planning_evaluation_status": "completed",
+  "evaluation_job": "8340370.0",
+  "planning_episodes": 64
+}

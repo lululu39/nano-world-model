@@ -1,5 +1,9 @@
 # Initial PushT pretrained transfer results
 
+The completed [prediction-history follow-up](pusht_prefix.md) adds a matched-budget
+RoboJEPA run with retained predicted context and a three-method comparison. The
+original two-method results below remain unchanged.
+
 Both end-to-end pipelines completed on November 11, 2026. This is a single-seed
 pretrained-system transfer comparison, not an architecture ablation or an exact
 reproduction of the NanoWM paper's unpublished evaluation settings.

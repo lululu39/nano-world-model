@@ -1,0 +1,21 @@
+{
+  "nanowm": {
+    "episodes": 64,
+    "successes": 31,
+    "replans": 291
+  },
+  "single_frame": {
+    "episodes": 64,
+    "successes": 32,
+    "replans": 277
+  },
+  "prefix": {
+    "episodes": 64,
+    "successes": 34,
+    "replans": 264
+  },
+  "same_training_recipe": true,
+  "same_episode_split": true,
+  "finite_updates": 3000,
+  "same_goals_protocol_gpu_and_dependencies": true
+}
