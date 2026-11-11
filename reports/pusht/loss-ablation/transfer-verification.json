@@ -1,0 +1,7 @@
+{
+  "num_job_starts": 1,
+  "output_transfers_started": 2,
+  "output_transfers_finished": 2,
+  "checkpoint_exit_code": 85,
+  "checkpoint_and_final_upload_verified": true
+}

@@ -1,0 +1,16 @@
+{
+  "recorded_at": "2026-11-11T22:37:12Z",
+  "stage": "train_queued",
+  "recovery_job": "8393873.0",
+  "train_job": "8399845.0",
+  "formal_training_started": false,
+  "tests": {
+    "passed": 57,
+    "skipped": 1
+  },
+  "gpu_smoke_passed": true,
+  "exact_recovery_passed": true,
+  "two_goal_pipeline_smoke_completed": true,
+  "run_id": "82312534",
+  "source": "b23027cdf292a28e0648d107593f444bdf506677"
+}

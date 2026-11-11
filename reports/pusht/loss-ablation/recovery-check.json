@@ -1,0 +1,42 @@
+{
+  "completed": true,
+  "interrupted_step": 4,
+  "final_step": 8,
+  "full_checkpoint_bitwise_equal": true,
+  "all_update_metrics_equal": true,
+  "diagnostic": true,
+  "wandb_run_created": false,
+  "first_allocation": {
+    "pid": 195,
+    "scratch": "/var/lib/condor/execute/slot2/dir_2845309/scratch",
+    "gpu": "NVIDIA H200",
+    "interrupted_step": 4
+  },
+  "restored_scratch": "/var/lib/condor/execute/slot2/dir_2845309/scratch",
+  "gpu": "NVIDIA H200",
+  "loss_type": "mse",
+  "planning_smoke": {
+    "model": "robojepa",
+    "protocol": "shared_benchmark",
+    "diagnostic_subset": true,
+    "completed": true,
+    "episodes": 2,
+    "requested_episodes": 2,
+    "success_rate": 0.0,
+    "success_count": 0,
+    "success_wilson95": [
+      0.0,
+      0.6576280471103807
+    ],
+    "goal_distance_mean": 258.4233856201172,
+    "goal_distance_definition": "Original PushT seven-dimensional state L2 (mixed position/angle/velocity units)",
+    "planning_latency_seconds": {
+      "median": 0.5980651192367077,
+      "p95": 0.6326233777217567,
+      "mean": 0.6034436324345214,
+      "replans": 14
+    },
+    "latency_scope": "CUDA-synchronized online image encoding plus complete CEM; excludes warmup, simulator/rendering",
+    "paper_protocol_complete": false
+  }
+}

@@ -4,12 +4,16 @@ One additional MSE run is authorized on November 11, 2026. The comparison reuses
 the completed prefix-history MAE experiment; it does not rerun that baseline or
 change the ongoing 160,000-update MAE experiment. Results are pending.
 
-At 22:01 UTC on November 11, recovery/smoke job `8393873.0` is queued for H200.
-Formal training has not started. The bounded controller advances only after all
-GPU gates pass, then runs the single training budget and 64-goal evaluation.
-[Submission evidence](../../reports/pusht/loss-ablation/submission.json) records
-the source version and checks. The reserved W&B run is
-[82312534](https://wandb.ai/yibozhong657-none/nanowm/runs/82312534); it is created
+At 22:37 UTC on November 11, recovery/smoke job `8393873.0` has completed:
+57 tests passed, one skipped; pretrained tensors, causal/action alignment,
+finite MSE gradients, exact eight-update exit-85 recovery, and two-goal
+closed-loop execution passed. The diagnostic goals are not a model-quality
+estimate. Formal job `8399845.0` was released at 22:34 UTC and is queued for
+H200; formal training has not started. After training, the bounded controller
+runs the matched 64-goal evaluation and stops.
+[Validation evidence](../../reports/pusht/loss-ablation/validation.json) records
+the checks and job identities. W&B run
+[82312534](https://wandb.ai/yibozhong657-none/nanowm/runs/82312534) is created
 only when formal training initializes.
 
 The MSE configuration is
