@@ -1,0 +1,64 @@
+{
+  "rows": [
+    {
+      "method": "robojepa_prefix_mae",
+      "success_count": 34,
+      "episodes": 64,
+      "success_rate": 0.53125,
+      "goal_distance": 176.070527613163,
+      "planning_median_seconds": 1.0679975701496005,
+      "planning_p95_seconds": 1.0707054872065782
+    },
+    {
+      "method": "robojepa_prefix_mse",
+      "success_count": 33,
+      "episodes": 64,
+      "success_rate": 0.515625,
+      "goal_distance": 166.63034182786942,
+      "planning_median_seconds": 1.087046081200242,
+      "planning_p95_seconds": 1.0963169276714324
+    }
+  ],
+  "paired_successes": {
+    "both_success": 28,
+    "mae_only_success": 6,
+    "mse_only_success": 5,
+    "both_fail": 25
+  },
+  "training": [
+    {
+      "step": 3000,
+      "run_id": "2b32b1fd",
+      "elapsed_seconds": 1146.3891414366663,
+      "best_dev_loss": 0.09438244858756661,
+      "diagnostic": false,
+      "exit_code": 0,
+      "gpu": "NVIDIA H200"
+    },
+    {
+      "step": 3000,
+      "run_id": "82312534",
+      "elapsed_seconds": 1159.87272259593,
+      "best_dev_loss": 0.0282241526292637,
+      "diagnostic": false,
+      "exit_code": 0,
+      "gpu": "NVIDIA H200",
+      "loss_type": "mse",
+      "completed": true,
+      "target_steps": 3000,
+      "windows_seen": 12000,
+      "stop_reason": "target_reached"
+    }
+  ],
+  "checks": {
+    "same_recipe_except_loss": true,
+    "same_split_goals_protocol": true,
+    "finite_updates_per_run": 3000,
+    "evaluated_checkpoint_step": 3000,
+    "same_training_gpu_model": true,
+    "same_evaluation_gpu_model_and_runtime": true
+  },
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "goal_distance_definition": "Original PushT seven-dimensional state L2 (mixed position/angle/velocity units)",
+  "comparison": "One training seed and 64 fixed tasks; no general superiority claim. Same GPU model, not necessarily the same physical device. Training MAE and MSE values are not directly comparable."
+}

@@ -1,0 +1,3 @@
+method,success_count,episodes,success_rate,goal_distance,planning_median_seconds,planning_p95_seconds
+robojepa_prefix_mae,34,64,0.53125,176.070527613163,1.0679975701496005,1.0707054872065782
+robojepa_prefix_mse,33,64,0.515625,166.63034182786942,1.087046081200242,1.0963169276714324

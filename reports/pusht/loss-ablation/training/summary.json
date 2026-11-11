@@ -1,0 +1,14 @@
+{
+  "step": 3000,
+  "run_id": "82312534",
+  "elapsed_seconds": 1159.87272259593,
+  "best_dev_loss": 0.0282241526292637,
+  "diagnostic": false,
+  "exit_code": 0,
+  "gpu": "NVIDIA H200",
+  "loss_type": "mse",
+  "completed": true,
+  "target_steps": 3000,
+  "windows_seen": 12000,
+  "stop_reason": "target_reached"
+}

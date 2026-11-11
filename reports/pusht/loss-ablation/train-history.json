@@ -1,0 +1,14 @@
+{
+  "ClusterId": 8399845,
+  "ProcId": 0,
+  "JobStatus": 4,
+  "ExitCode": 0,
+  "NumJobStarts": 1,
+  "NumOutputTransferStarts": 1,
+  "CheckpointNumber": null,
+  "SuccessCheckpointExitCode": 85,
+  "TransferCheckpoint": "results.tar,checkpoints.tar",
+  "LastRemoteHost": "slot2_6@gpu4004.chtc.wisc.edu",
+  "AssignedGPUs": "GPU-48e4e4f6",
+  "RemoteWallClockTime": 1310.0
+}

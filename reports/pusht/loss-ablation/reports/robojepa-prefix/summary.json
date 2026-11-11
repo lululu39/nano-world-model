@@ -1,0 +1,24 @@
+{
+  "model": "robojepa",
+  "protocol": "shared_benchmark",
+  "diagnostic_subset": false,
+  "completed": true,
+  "episodes": 64,
+  "requested_episodes": 64,
+  "success_rate": 0.515625,
+  "success_count": 33,
+  "success_wilson95": [
+    0.3958139224399903,
+    0.6336665143421609
+  ],
+  "goal_distance_mean": 166.63034182786942,
+  "goal_distance_definition": "Original PushT seven-dimensional state L2 (mixed position/angle/velocity units)",
+  "planning_latency_seconds": {
+    "median": 1.087046081200242,
+    "p95": 1.0963169276714324,
+    "mean": 1.0891720070331186,
+    "replans": 270
+  },
+  "latency_scope": "CUDA-synchronized online image encoding plus complete CEM; excludes warmup, simulator/rendering",
+  "paper_protocol_complete": false
+}

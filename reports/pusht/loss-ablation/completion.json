@@ -1,0 +1,19 @@
+{
+  "status": "experiments_complete",
+  "completed_at": "2026-11-11T23:18:51Z",
+  "verified_at": "2026-11-11T23:27:29Z",
+  "jobs": {
+    "recovery": "8393873.0",
+    "train": "8399845.0",
+    "evaluate": "8405753.0"
+  },
+  "source": "b23027cdf292a28e0648d107593f444bdf506677",
+  "run_id": "82312534",
+  "checkpoint": "/staging/y/yzhong239/nanowm-research/pusht-robojepa22m-prefix-mse-seed42-checkpoints-v1.tar",
+  "checkpoint_bytes": 644239360,
+  "recomputed_comparison_matches_saved_report": true,
+  "goal_distance_reduction_percent": 5.361593398546636,
+  "planning_median_increase_percent": 1.7835725083132248,
+  "active_jobs": [],
+  "controller_active": false
+}
