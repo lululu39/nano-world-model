@@ -1,0 +1,25 @@
+{
+  "rows": [
+    {
+      "method": "nanowm",
+      "success_rate": 0.484375,
+      "success_count": 31,
+      "episodes": 64,
+      "goal_distance": 156.75898477435112,
+      "planning_median_seconds": 31.4091652110219,
+      "planning_p95_seconds": 31.438681138679385
+    },
+    {
+      "method": "robojepa",
+      "success_rate": 0.5,
+      "success_count": 32,
+      "episodes": 64,
+      "goal_distance": 224.3997042775154,
+      "planning_median_seconds": 0.8137333150953054,
+      "planning_p95_seconds": 0.8284667633473873
+    }
+  ],
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "goal_distance_definition": "Original PushT seven-dimensional state L2 (mixed position/angle/velocity units)",
+  "comparison": "Pretrained system transfer; different representations and pretraining data"
+}

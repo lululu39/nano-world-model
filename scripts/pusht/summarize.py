@@ -47,7 +47,7 @@ def main():
     output = Path(args.output); output.mkdir(parents=True, exist_ok=True)
     (output/"comparison.json").write_text(json.dumps(result, indent=2)+"\n")
     with (output/"comparison.csv").open("w", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=list(result["rows"][0]))
+        writer = csv.DictWriter(stream, fieldnames=list(result["rows"][0]), lineterminator="\n")
         writer.writeheader(); writer.writerows(result["rows"])
     lines = ["| Method | Success | Goal distance | Planning median / P95 (s) |",
              "|---|---:|---:|---:|"]

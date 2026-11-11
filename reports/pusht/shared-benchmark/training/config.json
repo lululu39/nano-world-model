@@ -1,0 +1,45 @@
+{
+  "representation": "vjepa21g-256-ln-rowmajor-v1",
+  "seed": 42,
+  "deterministic_algorithms": true,
+  "frames": 4,
+  "context_frames": 1,
+  "frame_interval": 5,
+  "action_dim": 10,
+  "action_adapter": "linear_10_to_64",
+  "state_policy": "zeros",
+  "embodiment_id": 2,
+  "view_ids": [
+    0
+  ],
+  "encoder_frozen": true,
+  "training": {
+    "steps": 3000,
+    "batch_size": 4,
+    "lr": 5e-05,
+    "adapter_lr": 0.0005,
+    "warmup_steps": 100,
+    "weight_decay": 0.01,
+    "grad_clip": 1.0,
+    "eval_every": 250,
+    "validation_windows": 64,
+    "checkpoint_seconds": 1700,
+    "max_training_seconds": 14400,
+    "bf16": true
+  },
+  "logging": {
+    "project": "nanochat",
+    "entity": "yibozhong657-none",
+    "group": "nanowm-pusht-robojepa22m"
+  },
+  "action_statistics": {
+    "mean": [
+      -0.007812565192580223,
+      0.006860686466097832
+    ],
+    "std": [
+      0.2084684818983078,
+      0.20674966275691986
+    ]
+  }
+}

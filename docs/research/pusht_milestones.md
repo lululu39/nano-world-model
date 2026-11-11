@@ -150,6 +150,10 @@ requires the completed training checkpoint and never initializes W&B.
 
 ## Initial reported outcomes
 
+Both milestones have now produced complete 64-goal evaluation results; see
+[the initial comparison report](pusht_results.md) for the table, limitations and
+reproducibility artifacts.
+
 The first complete released-checkpoint evaluation is recorded in
 [`reports/pusht/nanowm-official`](../../reports/pusht/nanowm-official): 31/64
 successes (48.4375%), mean original state distance 156.758985, and median/P95

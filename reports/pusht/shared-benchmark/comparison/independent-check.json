@@ -1,0 +1,14 @@
+{
+  "nanowm": {
+    "episodes": 64,
+    "successes": 31,
+    "replans": 291,
+    "independent_aggregate_check": true
+  },
+  "robojepa": {
+    "episodes": 64,
+    "successes": 32,
+    "replans": 277,
+    "independent_aggregate_check": true
+  }
+}

@@ -4,11 +4,17 @@
 
 This fork adds a modular, decoder-free research path with pretrained RoboJEPA,
 deterministic next-latent prediction, and the original NanoWM diffusion/flow
-backbones in a shared representation. It includes common rollout, CEM/MPC,
+backbones through common latent interfaces. It includes common rollout, CEM/MPC,
 metrics, resumable training, configs and smoke tests. Existing NanoWM commands
 and checkpoints remain supported. Start with the
 [latent research guide](docs/research/latent_world_models.md) and
 [architecture decisions](docs/research/architecture.md).
+
+The first complete PushT comparison uses the official NanoWM checkpoint and
+RoboJEPA-22M with a frozen encoder and 3,000 fine-tuning updates. See the
+[results, protocol limitations and raw records](docs/research/pusht_results.md).
+This initial comparison shares the planning protocol while retaining each
+pretrained model's own representation.
 
 <div align="center">
 <a href='https://arxiv.org/abs/2605.23993'><img src='https://img.shields.io/badge/arXiv-2605.23993-b31b1b.svg'></a>

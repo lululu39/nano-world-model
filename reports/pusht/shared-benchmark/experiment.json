@@ -1,0 +1,27 @@
+{
+  "date": "2026-11-11",
+  "training_job": "8313633.0",
+  "shared_evaluation_job": "8313667.0",
+  "preparation_and_nanowm_job": "8313414.0",
+  "wandb_run": "https://wandb.ai/yibozhong657-none/nanochat/runs/6804e39e",
+  "training_steps": 3000,
+  "training_seed": 42,
+  "training_seconds": 1144.6022652927786,
+  "training_gpu": "NVIDIA H200",
+  "evaluation_gpu": "NVIDIA A100-SXM4-40GB",
+  "observed_scheduler_gpu_id": "GPU-20e62ffc",
+  "evaluation_node": "gpulab2004.chtc.wisc.edu",
+  "median_planning_speedup": 38.59884390667134,
+  "training_metrics_verified": true,
+  "training_validation_episode_disjointness_verified": true,
+  "regression": {
+    "passed": 39,
+    "optional_rt1_skipped": 1
+  },
+  "checkpoint_archive": "pusht-robojepa22m-seed42-checkpoints-v1.tar",
+  "checkpoint_archive_bytes": 644239360,
+  "source_versions": {
+    "nanowm_evaluation": "02e10b8",
+    "robojepa_training_and_evaluation": "d2a02e8b74cbb73af58c755664b292607f273cd8"
+  }
+}
