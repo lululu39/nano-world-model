@@ -1,0 +1,37 @@
+representation: vjepa21g-256-ln-rowmajor-v1
+seed: 42
+deterministic_algorithms: true
+frames: 4
+context_frames: 1
+rollout_context_frames: 3
+frame_interval: 5
+action_dim: 10
+action_adapter: linear_10_to_64
+state_policy: zeros
+embodiment_id: 2
+view_ids: [0]
+encoder_frozen: true
+training:
+  steps: 160000
+  batch_size: 4
+  lr: 0.00005
+  adapter_lr: 0.0005
+  warmup_steps: 100
+  weight_decay: 0.01
+  grad_clip: 1.0
+  eval_every: 250
+  validation_windows: 64
+  checkpoint_seconds: 1700
+  max_training_seconds: 86400
+  bf16: true
+logging:
+  project: nanowm
+  entity: yibozhong657-none
+  group: nanowm-pusht-robojepa22m-prefix-10pct
+# Prepared configuration only; creating this file does not submit a training job.
+# Initialize from official pretrained weights in a new output directory/run.
+# NanoWM reference: 100,000 updates * 8 GPUs * batch 8 = 6,400,000 windows.
+# This target: 160,000 updates * batch 4 = 640,000 windows = 10% of that exposure.
+# This is NOT a 10% subset of trajectories, unique images, or external pretraining.
+# Keep the existing official-train 95/5 split and fixed official-val planning goals.
+# A time-capped run is incomplete unless the recorded step reaches 160,000.

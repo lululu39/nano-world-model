@@ -28,6 +28,10 @@ the initial run took 1,144.60 seconds. Its best dev loss was 0.09438245 versus
 from the official checkpoint again; the encoder stayed frozen. Planning used the
 strictly reloaded best checkpoint, including its three-frame history contract.
 
+A [proposed 10% training-window budget](pusht_10pct.md) defines a larger run using
+the same algorithm. Only its configuration has been prepared; it is not a new
+experimental result or a submitted job.
+
 The NanoWM row is reused from the completed initial comparison. Differences in
 representations, model sizes and external pretraining remain; this is not an
 isolated diffusion-versus-deterministic architecture comparison. The initial
