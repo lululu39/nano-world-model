@@ -1,0 +1,14 @@
+{
+  "ClusterId": 8358066,
+  "ProcId": 0,
+  "JobStatus": 4,
+  "ExitCode": 0,
+  "NumJobStarts": 1,
+  "NumOutputTransferStarts": 2,
+  "CheckpointNumber": 0,
+  "SuccessCheckpointExitCode": 85,
+  "TransferCheckpoint": "results.tar,checkpoints.tar",
+  "LastRemoteHost": "slot3_2@hsharma-chtcgpu4000.chtc.wisc.edu",
+  "AssignedGPUs": "GPU-e7ae44a1",
+  "RemoteWallClockTime": 366.0
+}

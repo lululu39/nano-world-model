@@ -1,0 +1,41 @@
+{
+  "strict": true,
+  "pretrained_predictor_exactly_equal": true,
+  "predictor_tensor_count": 106,
+  "encoder_frozen": true,
+  "action_dim": 10,
+  "embodiment_id": 2,
+  "state_policy": "zeros",
+  "input_size": [
+    256,
+    256
+  ],
+  "token_layout": "view,row,column,channel",
+  "grid": [
+    1,
+    16,
+    16,
+    1664
+  ],
+  "rollout_context_frames": 3,
+  "prefix_teacher_equivalence": true,
+  "future_inputs_cannot_change_past": true,
+  "history_feature_max_delta": 3.2613258361816406,
+  "history_action_max_delta": 1.2980728149414062,
+  "predicted_prefix_action_alignment": true,
+  "actual_resolution": [
+    256,
+    256
+  ],
+  "preprocessing_verified": true,
+  "spatial_tokens_verified": true,
+  "native_predictor_equivalence": true,
+  "gradient_verified": true,
+  "exact_resume_next_update": true,
+  "relative_actions_match_source_positions": true,
+  "normalized_action_replay_matches_raw": true,
+  "deterministic_algorithms": true,
+  "diagnostic_loss": 0.26798737049102783,
+  "gpu": "NVIDIA H200",
+  "peak_bytes": 8785102336
+}

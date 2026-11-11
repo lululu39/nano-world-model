@@ -1,0 +1,49 @@
+........................................s....                            [100%]
+=============================== warnings summary ===============================
+runtime/.venv/lib/python3.11/site-packages/pydantic/_internal/_generate_schema.py:2274
+  /var/lib/condor/execute/slot3/dir_2020704/scratch/runtime/.venv/lib/python3.11/site-packages/pydantic/_internal/_generate_schema.py:2274: UnsupportedFieldAttributeWarning: The 'repr' attribute with value False was provided to the `Field()` function, which has no effect in the context it was used. 'repr' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+    warnings.warn(
+
+runtime/.venv/lib/python3.11/site-packages/pydantic/_internal/_generate_schema.py:2274
+  /var/lib/condor/execute/slot3/dir_2020704/scratch/runtime/.venv/lib/python3.11/site-packages/pydantic/_internal/_generate_schema.py:2274: UnsupportedFieldAttributeWarning: The 'frozen' attribute with value True was provided to the `Field()` function, which has no effect in the context it was used. 'frozen' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+    warnings.warn(
+
+runtime/.venv/lib/python3.11/site-packages/lightning_fabric/plugins/environments/xla.py:18
+  /var/lib/condor/execute/slot3/dir_2020704/scratch/runtime/.venv/lib/python3.11/site-packages/lightning_fabric/plugins/environments/xla.py:18: DeprecationWarning: `ModuleAvailableCache` is a special case of `RequirementCache`. Please use `RequirementCache(module=...)` instead.
+    from lightning_fabric.accelerators.tpu import _XLA_AVAILABLE, TPUAccelerator
+
+runtime/.venv/lib/python3.11/site-packages/lightning_fabric/__init__.py:29
+  /var/lib/condor/execute/slot3/dir_2020704/scratch/runtime/.venv/lib/python3.11/site-packages/lightning_fabric/__init__.py:29: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+    __import__("pkg_resources").declare_namespace(__name__)
+
+runtime/.venv/lib/python3.11/site-packages/lightning_fabric/__init__.py:29
+  /var/lib/condor/execute/slot3/dir_2020704/scratch/runtime/.venv/lib/python3.11/site-packages/lightning_fabric/__init__.py:29: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('lightning_fabric')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    __import__("pkg_resources").declare_namespace(__name__)
+
+runtime/.venv/lib/python3.11/site-packages/pytorch_lightning/__init__.py:45
+  /var/lib/condor/execute/slot3/dir_2020704/scratch/runtime/.venv/lib/python3.11/site-packages/pytorch_lightning/__init__.py:45: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('pytorch_lightning')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    __import__("pkg_resources").declare_namespace(__name__)
+
+tests/latent/test_robojepa.py::test_real_upstream_predictor_load_and_gradient
+  /var/lib/condor/execute/slot3/dir_2020704/scratch/runtime/.venv/lib/python3.11/site-packages/timm/models/layers/__init__.py:48: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+    warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+
+tests/test_trainer_environment.py::test_training_and_evaluation_trainer_api[True]
+tests/test_trainer_environment.py::test_training_and_evaluation_trainer_api[False]
+  /var/lib/condor/execute/slot3/dir_2020704/scratch/runtime/.venv/lib/python3.11/site-packages/pytorch_lightning/trainer/connectors/data_connector.py:224: PossibleUserWarning: The dataloader, train_dataloader, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 192 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+    rank_zero_warn(
+
+tests/test_trainer_environment.py::test_training_and_evaluation_trainer_api[True]
+tests/test_trainer_environment.py::test_training_and_evaluation_trainer_api[False]
+  /var/lib/condor/execute/slot3/dir_2020704/scratch/runtime/.venv/lib/python3.11/site-packages/pytorch_lightning/trainer/connectors/data_connector.py:224: PossibleUserWarning: The dataloader, val_dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 192 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+    rank_zero_warn(
+
+tests/test_trainer_environment.py::test_training_and_evaluation_trainer_api[True]
+tests/test_trainer_environment.py::test_training_and_evaluation_trainer_api[False]
+  /var/lib/condor/execute/slot3/dir_2020704/scratch/runtime/.venv/lib/python3.11/site-packages/torch/utils/data/dataloader.py:665: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+    warnings.warn(warn_msg)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+44 passed, 1 skipped, 13 warnings in 13.89s

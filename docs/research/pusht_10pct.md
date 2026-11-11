@@ -1,10 +1,10 @@
 # PushT 10% training-window budget
 
-Status: submitted on November 11, 2026. Recovery diagnostic job `8358066.0`
-is queued; formal training has not started. Source snapshot `0e29f14` contains
-the long-run worker and checkpoint recovery check. The bounded controller
-submits one formal run only after that check passes. This document defines
-the experiment budget, not a result.
+Status at 20:48 UTC on November 11, 2026: recovery diagnostic `8358066.0`
+passed, and formal job `8375071.0` was audited while held and released. It is
+queued, with no formal training updates observed yet. Worker source remains
+`0e29f14`; controller source is `703a10e`. The 160,000-update budget and run ID
+are unchanged. This document defines the experiment budget, not a result.
 
 The denominator is the official NanoWM PushT checkpoint's cumulative training
 window exposure: 100,000 updates, eight GPUs and batch eight per GPU, giving
@@ -102,6 +102,30 @@ The persistent run identity is `854d4fd1` in project `nanowm`, entity
 is created only when formal training starts. Diagnostics do not use that run.
 The local execution record is `world-models/jobs/pusht-10pct/state.json`, with
 `controller.log`, held-submission audits and per-phase scheduler logs beside it.
-The controller snapshot and packaged source remain fixed for this execution.
+The packaged training source remains fixed; the controller-only correction
+is recorded separately below.
 It stops on failure or the stated training cap and cannot create another formal
 run or enlarge the budget. Actual completion and planning results are pending.
+
+## Recovery check and controller correction
+
+The H200 diagnostic passed 44 tests (one optional test skipped), strict loading
+of 106 pretrained predictor tensors, action/image/token and causal-history
+checks, and eight diagnostic updates. Four updates followed by exit 85,
+checkpoint upload and process restart produced exactly the same model,
+optimizer, RNG, data position and update metrics as eight uninterrupted updates.
+The [recovery report](../../reports/pusht/ten-percent/recovery/recovery-check.json)
+and [transfer evidence](../../reports/pusht/ten-percent/recovery/transfer-verification.json)
+are preserved with the scheduler log and hardware checks.
+
+The first controller incorrectly required `NumJobStarts >= 2`. The actual
+checkpoint restart occurred in the same sandbox and allocation, so that count
+remained one. This is expected behavior for
+[HTCondor self-checkpointing](https://htcondor.readthedocs.io/en/main/users-manual/self-checkpointing-applications.html).
+The controller halted after the diagnostic, before submitting any formal run.
+The corrected check requires completed checkpoint and final output transfers,
+the exit-85 configuration and both checkpoint payloads, in addition to all the
+unchanged bitwise numerical checks. Five stdlib scheduler regression tests pass,
+including the recorded single-allocation case and missing-transfer failures.
+No GPU diagnostic or formal run was duplicated. This verifies an actual process
+restart and upload, not eviction onto a different node.
