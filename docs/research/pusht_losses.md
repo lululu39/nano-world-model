@@ -6,6 +6,11 @@ MSE succeeded on one fewer goal than MAE and reduced mean goal distance by
 The comparison reuses the completed prefix-history MAE experiment; it does
 not rerun that baseline or change the ongoing 160,000-update MAE experiment.
 
+Following this comparison, the maintainer chose MAE as the default for future
+RoboJEPA fine-tuning. This is a workflow decision, not a claim of statistically
+established superiority. The MSE configuration and results remain available
+for reproducibility; no additional MSE run is scheduled.
+
 | Objective | Success | Mean goal distance (lower is better) | Median planning latency | P95 planning latency |
 | --- | --- | --- | --- | --- |
 | MAE | 34/64 (53.125%) | 176.070528 | 1.067998 s | 1.070705 s |

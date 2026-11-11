@@ -18,6 +18,9 @@
 
 # Experiment tracking
 
+- Default to MAE for RoboJEPA fine-tuning unless the user explicitly requests
+  another training objective. Retain the completed MSE ablation as a reference;
+  do not schedule additional MSE experiments without a new request.
 - Run smoke/debug checks and authorized formal training in the same HTCondor
   job and GPU allocation. On success, start formal training immediately without
   releasing the GPU and submitting another training job. On failure, stop
