@@ -4,7 +4,10 @@ import json
 
 
 def comparison_contract(config):
-    return {name: config[name] for name in ("protocol", "representation", "data", "action_dim", "planning")}
+    result = {name: config[name] for name in ("protocol", "representation", "encoder", "data", "action_dim", "planning", "seed")}
+    result["training_budget"] = {key: config["training"][key] for key in ("steps", "batch_size")}
+    result["rollout_context"] = config["rollout"]["context_frames"]
+    return result
 
 
 def assert_comparable(configs):

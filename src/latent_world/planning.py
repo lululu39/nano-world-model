@@ -12,7 +12,7 @@ def sampling_seed(seed, device):
     device = torch.device(device)
     devices = [device.index if device.index is not None else torch.cuda.current_device()] if device.type == "cuda" else []
     with torch.random.fork_rng(devices=devices):
-        torch.manual_seed(seed)
+        torch.random.default_generator.manual_seed(seed)
         if devices:
             with torch.cuda.device(device):
                 torch.cuda.manual_seed(seed)
