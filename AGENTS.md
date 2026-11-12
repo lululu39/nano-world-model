@@ -21,18 +21,21 @@
 - Default to MAE for RoboJEPA fine-tuning unless the user explicitly requests
   another training objective. Retain the completed MSE ablation as a reference;
   do not schedule additional MSE experiments without a new request.
-- Run smoke/debug checks and authorized formal training in the same HTCondor
-  job and GPU allocation. On success, start formal training immediately without
-  releasing the GPU and submitting another training job. On failure, stop
+- When GPU smoke/debug checks are needed, run them and authorized formal
+  training in the same HTCondor job and GPU allocation. On success, start formal
+  training immediately without releasing the GPU and submitting another training
+  job. On failure, stop
   training and retain a bounded debug session in that allocation. Keep
   diagnostic weights, RNG, data position and logs separate; initialize formal
   training from its configured starting state. Diagnostics create no W&B run.
-- Actively monitor an allocated GPU through environment startup, smoke tests,
-  and any evaluation preceding training. Diagnose failures promptly inside the
-  retained allocation and resume there after a reviewed fix. Stop startup
-  monitoring only after FORMAL_TRAIN_START and consecutive finite training
-  loss/gradient updates (100 updates by default). This supersedes the earlier
-  preference to stop monitoring after submission.
+- Use bounded debug jobs for environment preparation and unverified changes.
+  Reuse applicable validation for an already verified environment, implementation
+  and recipe; submit authorized training directly without redundant debug runs.
+  Report the job, W&B run and estimated duration after submission. Do not
+  continuously monitor the queue or wait for formal updates by default; the
+  maintainer withdrew the requirement to observe 100 updates before stopping.
+  Keep authorized background orchestration, recovery and result collection.
+  Diagnose failures before resuming; never resubmit blindly.
 - Future formal NanoWM research runs use W&B project `nanowm`, entity
   `yibozhong657-none`. Override legacy launcher project names when necessary.
 - Resume an existing run in its original project and with the same run ID.

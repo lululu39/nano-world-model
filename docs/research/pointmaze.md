@@ -101,7 +101,10 @@ command. Its debug window expired before intervention; no model updates or
 formal W&B run were created. Device metadata now comes from PyTorch with an
 optional UUID field. A reviewed `debug-resume.request` can restart the worker
 inside the same live allocation after a fix, preserving the failed-attempt
-record. It never retries errors automatically. Startup is actively monitored
-through smoke and baseline evaluation until formal training has at least
-100 consecutive finite updates. The failed allocation is retained in the
-experiment history; recovery uses the same job and reserved run identity.
+record. It never retries errors automatically. Environment preparation and
+unverified changes use bounded debug checks; applicable validation is reused
+for later training submissions. Continuous foreground monitoring through
+100 formal updates was subsequently withdrawn by the maintainer. The existing
+background controller continues the authorized pipeline and stops on failure.
+The failed allocation is retained in the experiment history; recovery uses
+the same job and reserved run identity.
