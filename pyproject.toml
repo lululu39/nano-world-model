@@ -57,6 +57,15 @@ rt1 = [
     "lerobot==0.3.3",
     "torchcodec==0.4.0", # TorchCodec's native ABI must match torch 2.7.
 ]
+pointmaze = [
+    "gym==0.23.1",
+    "mujoco-py==2.1.2.14",
+    "Cython==0.29.37",
+    "d4rl==1.1",
+    "dm-control==1.0.14",
+    "mujoco==2.3.7", # D4RL's unused dm-control dependency; PointMaze uses mujoco-py/2.1.0.
+    "patchelf==0.17.2.4",
+]
 
 [dependency-groups]
 dev = ["pytest==8.4.2", "pip==25.2"]
@@ -72,6 +81,7 @@ latent = [
 ]
 
 [tool.uv]
+conflicts = [[{ extra = "pusht" }, { extra = "pointmaze" }]]
 package = false
 required-version = ">=0.8.0"
 environments = ["sys_platform == 'linux' and platform_machine == 'x86_64'"]
