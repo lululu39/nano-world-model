@@ -18,7 +18,7 @@ def compare(nanowm, robojepa):
         raise ValueError("A smoke subset or incomplete evaluation cannot populate the benchmark table")
     if [s["model"] for s in summaries] != ["nanowm", "robojepa"]:
         raise ValueError("Expected one NanoWM and one fine-tuned RoboJEPA evaluation")
-    if protocols[0] != protocols[1] or protocols[0]["name"] != "shared_benchmark":
+    if protocols[0] != protocols[1] or protocols[0]["name"] not in ("shared_benchmark", "pointmaze_shared_benchmark"):
         raise ValueError("The two methods must use the exact shared benchmark config")
     if read(nanowm, "targets.json") != read(robojepa, "targets.json"):
         raise ValueError("The two methods used different goals")

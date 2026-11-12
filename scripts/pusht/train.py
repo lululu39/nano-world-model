@@ -1,4 +1,4 @@
-"""Bounded PushT transfer: frozen encoder, pretrained predictor, minimal action adapter."""
+"""Bounded visual-control transfer; PushT defaults remain backward compatible."""
 import argparse
 import json
 import math
@@ -15,7 +15,7 @@ from omegaconf import OmegaConf
 import torch
 from latent_world.checkpoint import save_checkpoint, load_checkpoint
 from latent_world.data import StatefulBatcher, collate_sequences
-from latent_world.pusht import load_robojepa, PushTWindows, prediction_loss, transfer_context_frames, transfer_loss_type
+from latent_world.pusht import load_robojepa, training_windows, prediction_loss, transfer_context_frames, transfer_loss_type
 
 
 def main():
@@ -50,8 +50,8 @@ def main():
     encoder, predictor, report = load_robojepa(args.weights, args.robo_repo, args.vjepa_repo, "cuda")
     report["rollout_context_frames"] = context_frames
     (output / "pretrained-loading.json").write_text(json.dumps(report, indent=2))
-    train = PushTWindows(args.assets, "train", cfg["frames"], cfg["seed"])
-    val = PushTWindows(args.assets, "val", cfg["frames"], cfg["seed"])
+    train = training_windows(args.assets, "train", cfg)
+    val = training_windows(args.assets, "val", cfg)
     cfg["action_statistics"] = {"mean":train.action_transform.mean.tolist(), "std":train.action_transform.std.tolist()}
     root = Path(__file__).resolve().parents[2]
     provenance = {"assets":json.loads((Path(args.assets)/"provenance.json").read_text()),

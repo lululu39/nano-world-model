@@ -73,7 +73,7 @@ class SDEncoderOnly(nn.Module):
             return posterior.sample() * self.scaling_factor
 
 
-def load_nanowm(assets, protocol, device):
+def load_nanowm(assets, protocol, device, *, environment="pusht"):
     from models import get_models
     from diffusion import create_diffusion
     from planning.diffusion_world_model import DiffusionWorldModel
@@ -83,7 +83,11 @@ def load_nanowm(assets, protocol, device):
     # Resolve legacy absent codec fields by verifying the actual weight shapes.
     assert cfg.model.arch == "NanoWM-B/2" and cfg.model.latent_size == 32
     assert cfg.dataset.frame_interval == 5 and cfg.dataset.spec.action_dim == 2
-    assert cfg.dataset.loader.use_relative_actions and cfg.dataset.loader.action_scale == 100.0
+    assert environment in ("pusht", "point_maze") and cfg.dataset.name == environment
+    if environment == "pusht":
+        assert cfg.dataset.loader.use_relative_actions and cfg.dataset.loader.action_scale == 100.0
+    else:
+        assert not cfg.dataset.loader.use_relative_actions and cfg.dataset.loader.action_scale == 1.0
     assert cfg.dataset.loader.normalize_action and cfg.model.n_context_frames == 1
     cfg.experiment.infra.compile = False
     model = get_models(cfg)
@@ -120,11 +124,15 @@ def transfer_loss_type(cfg):
     return loss_type
 
 
-def validate_transfer_checkpoint(state, action_stats):
+def validate_transfer_checkpoint(state, action_stats, *, environment="pusht"):
     cfg = state["config"]
+    if environment not in ("pusht", "point_maze") or cfg.get("environment", "pusht") != environment:
+        raise ValueError("Fine-tuned checkpoint belongs to a different environment")
     transfer_loss_type(cfg)
     expected = {"representation":"vjepa21g-256-ln-rowmajor-v1", "context_frames":1,
         "frame_interval":5, "action_dim":10, "state_policy":"zeros", "embodiment_id":2, "view_ids":[0]}
+    if environment == "point_maze":
+        expected.update(action_representation="pointmaze-direct-control-5x2-v1", action_scale=1.0)
     if any(cfg.get(k) != v for k,v in expected.items()):
         raise ValueError("Fine-tuned checkpoint uses incompatible observation/action semantics")
     actual = {k:torch.as_tensor(v).tolist() for k,v in action_stats.items()}
@@ -133,7 +141,7 @@ def validate_transfer_checkpoint(state, action_stats):
     return transfer_context_frames(cfg)
 
 
-def load_robojepa(weights, robo_repo, vjepa_repo, device, checkpoint=None, action_stats=None):
+def load_robojepa(weights, robo_repo, vjepa_repo, device, checkpoint=None, action_stats=None, *, environment="pusht"):
     from .contracts import LatentSpec
     from .encoders import robojepa_encoder
     from .predictors import RoboJEPAPredictor
@@ -156,11 +164,12 @@ def load_robojepa(weights, robo_repo, vjepa_repo, device, checkpoint=None, actio
         trained = torch.load(checkpoint, map_location="cpu", weights_only=False)
         if action_stats is None:
             raise ValueError("Benchmark action statistics are required for checkpoint compatibility")
-        report["rollout_context_frames"] = validate_transfer_checkpoint(trained, action_stats)
+        report["rollout_context_frames"] = validate_transfer_checkpoint(trained, action_stats, environment=environment)
         predictor.load_state_dict(trained["model"], strict=True)
         report["finetuned_step"] = trained["step"]
         report["finetuned_run_id"] = trained["run_id"]
         report["loss_type"] = transfer_loss_type(trained["config"])
+        report["environment"] = trained["config"].get("environment", "pusht")
     return encoder.to(device).eval(), predictor.to(device), report
 
 
@@ -231,6 +240,16 @@ class PushTWindows:
         images = resize(images.permute(0,3,1,2).float() / 255, [256,256], antialias=True)
         actions = self.actions[ep, start:start+(self.frames-1)*5].reshape(self.frames-1,5,2)
         return {"observations":images.unsqueeze(1), "actions":self.action_transform.pack(actions)}
+
+
+def training_windows(assets, split, cfg):
+    environment = cfg.get("environment", "pusht")
+    if environment == "pusht":
+        return PushTWindows(assets, split, cfg["frames"], cfg["seed"])
+    if environment == "point_maze":
+        from .pointmaze import PointMazeWindows
+        return PointMazeWindows(assets, split, cfg["frames"], cfg["seed"])
+    raise ValueError(f"Unknown transfer environment: {environment}")
 
 
 def prediction_rollout(predictor, initial, actions, context_frames=1):

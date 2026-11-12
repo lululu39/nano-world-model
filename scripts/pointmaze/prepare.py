@@ -46,10 +46,14 @@ def main():
                 value = value.numpy() if isinstance(value, torch.Tensor) else np.asarray(value)
                 if value.ndim != 4 or value.shape[-1] != 3 or value.dtype != np.uint8:
                     raise ValueError(f'Unexpected source image representation: {value.shape}, {value.dtype}')
-                np.save(output, value, allow_pickle=False)
-                check = np.load(output, mmap_mode='r')
+                temporary = output.with_suffix('.npy.partial')
+                with temporary.open('wb') as stream:
+                    np.save(stream, value, allow_pickle=False)
+                check = np.load(temporary, mmap_mode='r')
                 assert check.shape == value.shape and check.dtype == value.dtype
                 assert np.array_equal(check[[0,-1]], value[[0,-1]])
+                del check
+                temporary.replace(output)
                 target.unlink()
             else:
                 torch.save(torch.as_tensor(value), target)

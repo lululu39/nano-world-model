@@ -1,0 +1,35 @@
+environment: point_maze
+representation: vjepa21g-256-ln-rowmajor-v1
+seed: 42
+deterministic_algorithms: true
+frames: 4
+context_frames: 1
+rollout_context_frames: 3
+loss_type: mae
+frame_interval: 5
+action_dim: 10
+action_representation: pointmaze-direct-control-5x2-v1
+action_scale: 1.0
+action_adapter: linear_10_to_64
+state_policy: zeros
+embodiment_id: 2
+view_ids: [0]
+encoder_frozen: true
+training:
+  steps: 3000
+  batch_size: 4
+  lr: 0.00005
+  adapter_lr: 0.0005
+  warmup_steps: 100
+  weight_decay: 0.01
+  grad_clip: 1.0
+  eval_every: 250
+  validation_windows: 64
+  checkpoint_seconds: 1700
+  max_training_seconds: 14400
+  bf16: true
+logging:
+  project: nanowm
+  entity: yibozhong657-none
+  group: nanowm-pointmaze-pilot
+  name: pointmaze-robojepa22m-prefix3-mae-3k-bs4-seed42

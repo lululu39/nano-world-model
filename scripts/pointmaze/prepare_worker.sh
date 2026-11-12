@@ -24,6 +24,7 @@ export WANDB_MODE=disabled OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THRE
 export UV_CACHE_DIR="$TASK_ROOT/uv-cache" HF_HOME="$TASK_ROOT/hf-cache"
 tar -xf source.tar
 tar -xf pusht-runtime-v1.tar
+export PATH="$TASK_ROOT/runtime/.venv/bin:$PATH"
 cp code/pyproject.toml code/uv.lock code/.python-version runtime/
 ./uv sync --frozen --project runtime --extra pointmaze --python /opt/project/.venv/bin/python
 ./uv pip check --python runtime/.venv/bin/python > reports/pip-check.txt

@@ -26,12 +26,17 @@ def main():
     p.add_argument("--output", required=True)
     p.add_argument("--context-frames", type=int, default=1)
     p.add_argument("--loss-type", choices=["mae", "mse"], default="mae")
+    p.add_argument("--environment", choices=["pusht", "point_maze"], default="pusht")
     args = p.parse_args()
     os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
     torch.use_deterministic_algorithms(True)
     torch.set_num_threads(4); torch.manual_seed(42)
     encoder, predictor, report = load_robojepa(args.weights, args.robo_repo, args.vjepa_repo, "cuda")
-    dataset = PushTWindows(args.assets, "train")
+    if args.environment == "point_maze":
+        from latent_world.pointmaze import PointMazeWindows
+        dataset = PointMazeWindows(args.assets, "train")
+    else:
+        dataset = PushTWindows(args.assets, "train")
     batcher = StatefulBatcher(dataset, 1, 42)
     batch = batcher.next().to("cuda")
     # Independent expression for ImageNet normalization and row-major token layout.
@@ -86,25 +91,29 @@ def main():
         report.update({"prefix_teacher_equivalence":True, "future_inputs_cannot_change_past":True,
                        "history_feature_max_delta":history_delta, "history_action_max_delta":action_delta,
                        "predicted_prefix_action_alignment":True})
-    # Real action chunk round trip, including simulator's own x100 conversion.
-    transform = dataset.action_transform
-    raw = dataset.actions[0,:15].reshape(3,5,2)
-    torch.testing.assert_close(transform.unpack(transform.pack(raw))*100, raw, rtol=1e-5, atol=1e-5)
-    # Dataset convention: relative target equals absolute target minus source position.
-    states = torch.load(dataset.root / "states.pth", weights_only=False).float()
-    absolute = torch.load(dataset.root / "abs_actions.pth", weights_only=False).float()
-    torch.testing.assert_close(dataset.actions[0,:15], absolute[0,:15]-states[0,:15,:2], rtol=1e-5, atol=1e-4)
-    velocities = torch.load(dataset.root / "velocities.pth", weights_only=False).float()
-    initial = torch.cat([states[0,0], velocities[0,0]]).numpy()
-    from planning.envs import create_planning_env
-    env = create_planning_env("pusht")
-    env.prepare(42, initial)
-    direct_states = [env.step(a.numpy())[3]["state"] for a in raw.reshape(-1,2)/100]
-    env.prepare(42, initial)
-    roundtrip_states = [env.step(a.numpy())[3]["state"] for a in transform.unpack(transform.pack(raw)).reshape(-1,2)]
-    np.testing.assert_allclose(direct_states, roundtrip_states, rtol=1e-5, atol=1e-4)
-    env.close()
-    del states, absolute, velocities
+    if args.environment == "point_maze":
+        from latent_world.pointmaze import verify_environment_alignment
+        report.update(verify_environment_alignment(args.assets, Path(args.output).parent))
+    else:
+        # Real action chunk round trip, including simulator's own x100 conversion.
+        transform = dataset.action_transform
+        raw = dataset.actions[0,:15].reshape(3,5,2)
+        torch.testing.assert_close(transform.unpack(transform.pack(raw))*100, raw, rtol=1e-5, atol=1e-5)
+        states = torch.load(dataset.root / "states.pth", weights_only=False).float()
+        absolute = torch.load(dataset.root / "abs_actions.pth", weights_only=False).float()
+        torch.testing.assert_close(dataset.actions[0,:15], absolute[0,:15]-states[0,:15,:2], rtol=1e-5, atol=1e-4)
+        velocities = torch.load(dataset.root / "velocities.pth", weights_only=False).float()
+        initial = torch.cat([states[0,0], velocities[0,0]]).numpy()
+        from planning.envs import create_planning_env
+        env = create_planning_env("pusht")
+        env.prepare(42, initial)
+        direct_states = [env.step(a.numpy())[3]["state"] for a in raw.reshape(-1,2)/100]
+        env.prepare(42, initial)
+        roundtrip_states = [env.step(a.numpy())[3]["state"] for a in transform.unpack(transform.pack(raw)).reshape(-1,2)]
+        np.testing.assert_allclose(direct_states, roundtrip_states, rtol=1e-5, atol=1e-4)
+        env.close()
+        del states, absolute, velocities
+        report["relative_actions_match_source_positions"] = True
     optimizer = torch.optim.AdamW(predictor.parameters(), lr=5e-5)
     def update():
         predictor.train(); optimizer.zero_grad(set_to_none=True)
@@ -135,7 +144,7 @@ def main():
         assert not differences
     report.update({"actual_resolution":[256,256], "preprocessing_verified":True, "spatial_tokens_verified":True,
         "native_predictor_equivalence":True, "gradient_verified":True, "exact_resume_next_update":True,
-        "relative_actions_match_source_positions":True, "normalized_action_replay_matches_raw":True,
+        "environment":args.environment, "normalized_action_replay_matches_raw":True,
         "deterministic_algorithms":True, "diagnostic_loss":first, "gpu":torch.cuda.get_device_name(),
         "peak_bytes":torch.cuda.max_memory_allocated(), "rollout_context_frames":args.context_frames,
         "loss_type":args.loss_type})

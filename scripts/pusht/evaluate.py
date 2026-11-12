@@ -77,30 +77,40 @@ def main():
     train_cfg = OmegaConf.load(assets / "nanowm/config.yaml")
     train_cfg.dataset_dir = str(assets / "data")
     experiment = PlanningExperiment(OmegaConf.create({"experiment": {"tasks": ["planning"]}}))
-    env = create_planning_env("pusht")
-    assert env.relative and env.action_scale == 100 and cfg.frame_interval == 5
+    environment_name = cfg.get("env_name", "pusht")
+    env = create_planning_env(environment_name)
+    assert cfg.frame_interval == 5
+    if environment_name == "pusht":
+        assert env.relative and env.action_scale == 100
     goals_path = Path(args.goals)
     if goals_path.exists():
         goal_data = torch.load(goals_path, weights_only=False)
+        if goal_data.get("environment", "pusht") != environment_name:
+            raise ValueError("Goal artifact belongs to a different environment")
         if goal_data["seed"] != cfg.seed or goal_data["goal_H"] != cfg.goal_H or len(goal_data["goals"]) != cfg.n_evals:
             raise ValueError("Goal artifact disagrees with the evaluation protocol")
         goals = [PlanningGoal(**g) for g in goal_data["goals"]]
     else:
-        goals = experiment._sample_dset_goals(env, train_cfg, cfg.n_evals, cfg.goal_H, 5, cfg.seed)
+        if environment_name == "point_maze":
+            from latent_world.pointmaze import sample_goals
+            goals = sample_goals(env, assets, cfg.n_evals, cfg.goal_H, cfg.seed)
+        else:
+            goals = experiment._sample_dset_goals(env, train_cfg, cfg.n_evals, cfg.goal_H, 5, cfg.seed)
         goals_path.parent.mkdir(parents=True, exist_ok=True)
-        torch.save({"seed":cfg.seed, "goal_H":cfg.goal_H, "goals":[asdict(g) for g in goals]}, goals_path)
+        torch.save({"seed":cfg.seed, "goal_H":cfg.goal_H, "environment":environment_name,
+                    "goals":[asdict(g) for g in goals]}, goals_path)
     write_json(out / "targets.json", experiment._serialize_goals(goals))
     if args.limit:
         goals = goals[:args.limit]
     stats = torch.load(assets / "action_stats.pt", weights_only=True)
     preprocessor = Preprocessor(action_mean=stats["mean"].repeat(5), action_std=stats["std"].repeat(5))
     if args.model == "nanowm":
-        wm, _, load_report = load_nanowm(assets, cfg, "cuda")
+        wm, _, load_report = load_nanowm(assets, cfg, "cuda", environment=environment_name)
     else:
         if not args.checkpoint:
             raise ValueError("RoboJEPA benchmark requires the fine-tuned checkpoint")
         encoder, predictor, load_report = load_robojepa(args.weights, args.robo_repo, args.vjepa_repo,
-                                                       "cuda", args.checkpoint, action_stats=stats)
+                                                       "cuda", args.checkpoint, action_stats=stats, environment=environment_name)
         wm = RoboPlanningModel(encoder, predictor, context_frames=load_report["rollout_context_frames"])
     if (out / "weight-loading.json").exists() and args.model == "robojepa":
         previous = json.loads((out / "weight-loading.json").read_text())
@@ -155,7 +165,8 @@ def main():
         "completed":count == len(goals), "episodes":count, "requested_episodes":len(goals),
         "success_rate":success/count, "success_count":int(success), "success_wilson95":[center-radius,center+radius],
         "goal_distance_mean":float(np.mean([r["state_dist"] for r in records])),
-        "goal_distance_definition":"Original PushT seven-dimensional state L2 (mixed position/angle/velocity units)",
+        "goal_distance_definition":("Original PushT seven-dimensional state L2 (mixed position/angle/velocity units)"
+                                    if environment_name == "pusht" else "PointMaze four-dimensional state L2 (position and velocity units)"),
         "planning_latency_seconds":{"median":float(np.median(times)), "p95":float(np.percentile(times,95)),
                                     "mean":float(np.mean(times)), "replans":len(times)},
         "latency_scope":"CUDA-synchronized online image encoding plus complete CEM; excludes warmup, simulator/rendering",
