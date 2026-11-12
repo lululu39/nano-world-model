@@ -7,6 +7,7 @@ from pathlib import Path
 import random
 import sys
 import time
+from evaluation_records import episode_record
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 import numpy as np
@@ -148,7 +149,7 @@ def main():
         planner.seconds.clear()
         single_cfg = OmegaConf.merge(cfg, {"seed":cfg.seed + i, "output_dir":str(out), "n_plot_samples":0})
         result = experiment._run_mpc(env, planner, preprocessor, [goal], single_cfg, 256, 5, torch.device("cuda"))
-        record = result["per_episode"][0]
+        record = episode_record(result["per_episode"][0], environment_name)
         record["episode"] = i
         record["planning_seconds"] = planner.seconds.copy()
         write_json(path, record)
