@@ -4,6 +4,7 @@ from gym import utils
 from d4rl import offline_env
 from .dynamic_mjc import MJCModel
 import numpy as np
+import os
 import random
 import gym
 
@@ -326,7 +327,11 @@ class MazeEnv(mujoco_env.MujocoEnv, utils.EzPickle, offline_env.OfflineEnv):
         return obs, state
     
     def _render_frame(self):
-        obs = self.sim.render(224, 224)
+        # OSMesa ignores the device index. Avoid mujoco-py's legacy parsing of
+        # CUDA_VISIBLE_DEVICES, which may contain a scheduler-assigned GPU UUID.
+        # Preserve CUDA visibility for the world model and legacy GPU rendering.
+        device_id = 0 if 'MUJOCO_PY_FORCE_CPU' in os.environ else -1
+        obs = self.sim.render(224, 224, device_id=device_id)
         return obs
     
     def seed(self, seed=None):
@@ -340,11 +345,11 @@ class MazeEnv(mujoco_env.MujocoEnv, utils.EzPickle, offline_env.OfflineEnv):
         self.return_value='obs'
         init_state = np.array([1.0856, 1.9746, 0.0098, 0.0217])
         self.set_state(init_state[:2],init_state[2:])
-        img = self.sim.render(224, 224)
+        img = self._render_frame()
         assert self.sim.render_contexts != 0, "Rendering failed"
         self.sim.render_contexts[0].cam.azimuth = 90
         self.sim.render_contexts[0].cam.elevation = -90
-        img1 = self.sim.render(224, 224)
+        img1 = self._render_frame()
         return img, img1
 
 
