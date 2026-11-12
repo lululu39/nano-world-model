@@ -1,0 +1,25 @@
+{
+  "completed": true,
+  "shape": [
+    224,
+    224,
+    3
+  ],
+  "dtype": "uint8",
+  "reset_and_replay_identical": true,
+  "control_clip": [
+    -1.0,
+    1.0
+  ],
+  "physics_frame_skip": 5,
+  "physics_timestep": 0.01,
+  "versions": {
+    "gym": "0.23.1",
+    "mujoco-py": "2.1.2.14",
+    "Cython": "0.29.37",
+    "d4rl": "1.1"
+  },
+  "renderer": "MuJoCo 2.1.0 / OSMesa",
+  "cuda_visible_devices": "GPU-3382ea72-50fa-0a39-fadc-7124df384bbe",
+  "cuda_visibility_preserved": true
+}

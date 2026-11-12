@@ -108,3 +108,15 @@ for later training submissions. Continuous foreground monitoring through
 background controller continues the authorized pipeline and stops on failure.
 The failed allocation is retained in the experiment history; recovery uses
 the same job and reserved run identity.
+
+The next GPU allocation passed 52 tests, then exposed a legacy mujoco-py
+compatibility issue: OSMesa initialization tried to parse the scheduler's GPU
+UUID as an integer. CPU rendering now supplies an explicit device index without
+changing CUDA visibility; the default GPU rendering path remains unchanged.
+The fix was validated on the retained H200 allocation: rendering and replay
+passed, all 106 pretrained predictor tensors matched, and preprocessing, action
+alignment, causal dependence, gradients and exact next-update recovery passed.
+Maximum dataset state replay error was 2.4438e-6. The original worker process
+resumed in the same allocation, with no new job or formal run. Evidence is in
+`reports/pointmaze/startup-debug`; remaining recovery and planning checks precede
+formal training.

@@ -1,0 +1,16 @@
+....................................................                     [100%]
+=============================== warnings summary ===============================
+tests/latent/test_components.py::test_native_nanowm_loss_and_rollout_compatibility[v]
+  /var/lib/condor/execute/slot2/dir_1800142/scratch/runtime/.venv/lib/python3.11/site-packages/pydantic/_internal/_generate_schema.py:2274: UnsupportedFieldAttributeWarning: The 'repr' attribute with value False was provided to the `Field()` function, which has no effect in the context it was used. 'repr' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+    warnings.warn(
+
+tests/latent/test_components.py::test_native_nanowm_loss_and_rollout_compatibility[v]
+  /var/lib/condor/execute/slot2/dir_1800142/scratch/runtime/.venv/lib/python3.11/site-packages/pydantic/_internal/_generate_schema.py:2274: UnsupportedFieldAttributeWarning: The 'frozen' attribute with value True was provided to the `Field()` function, which has no effect in the context it was used. 'frozen' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+    warnings.warn(
+
+tests/latent/test_robojepa.py::test_real_upstream_predictor_load_and_gradient
+  /var/lib/condor/execute/slot2/dir_1800142/scratch/runtime/.venv/lib/python3.11/site-packages/timm/models/layers/__init__.py:48: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+    warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+52 passed, 3 warnings in 7.51s

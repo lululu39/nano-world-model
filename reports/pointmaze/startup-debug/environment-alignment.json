@@ -1,0 +1,19 @@
+{
+  "dataset_state_replay_max_abs_errors": [
+    1.6689300537109375e-06,
+    2.4437904357910156e-06,
+    9.5367431640625e-07
+  ],
+  "render_mean_absolute_errors_0_1": [
+    0.00010525043688568415,
+    0.00010353099627822053,
+    0.00010363520214370652
+  ],
+  "agent_marker_center_errors_pixels": [
+    0.0,
+    0.05874685323936906,
+    0.0
+  ],
+  "action_scale": 1.0,
+  "relative_actions": false
+}

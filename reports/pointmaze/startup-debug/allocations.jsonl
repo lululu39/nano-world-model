@@ -1,0 +1,2 @@
+{"logical_device": 0, "name": "NVIDIA H200", "total_memory_bytes": 150111715328, "uuid": "3382ea72-50fa-0a39-fadc-7124df384bbe", "torch": "2.7.1+cu128", "recorded_at": "2026-11-12T02:44:11.295807+00:00", "cuda_visible_devices": "GPU-3382ea72-50fa-0a39-fadc-7124df384bbe"}
+{"logical_device": 0, "name": "NVIDIA H200", "total_memory_bytes": 150111715328, "uuid": "3382ea72-50fa-0a39-fadc-7124df384bbe", "torch": "2.7.1+cu128", "recorded_at": "2026-11-12T03:27:46.239092+00:00", "cuda_visible_devices": "GPU-3382ea72-50fa-0a39-fadc-7124df384bbe"}

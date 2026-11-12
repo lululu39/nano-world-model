@@ -1,0 +1,14 @@
+{
+  "source": "007280da2b7cf340d1e5a6b621fea26733e9a1ac",
+  "job": "8414049.0",
+  "run_id": "78a121fe",
+  "num_job_starts": 2,
+  "remote_host": "slot2_8@gpu5000.chtc.wisc.edu",
+  "started_at": "2026-11-12T03:27:45.053046+00:00",
+  "diagnostic_only": true,
+  "formal_training_started": false,
+  "verified": true,
+  "verification_completed_at": "2026-11-12T03:28:58.179956+00:00",
+  "worker_pid_before": 110,
+  "controller_pid": 1182587
+}
