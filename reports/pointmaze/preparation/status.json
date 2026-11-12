@@ -1,0 +1,21 @@
+{
+  "status": "preparation_packaging",
+  "prepare_job": "8413665.0",
+  "gpu_job_submitted": false,
+  "formal_training_started": false,
+  "controller_pid": 910464,
+  "run_id": "78a121fe",
+  "source": "b593a01d236abc3fe9cb0b75d31e92a00b36dae6",
+  "budget": {
+    "steps": 3000,
+    "batch_size": 4,
+    "seed": 42,
+    "max_training_seconds": 14400,
+    "windows": 12000
+  },
+  "cpu_tensor_tests_passed": 7,
+  "stdlib_tests_passed": 8,
+  "physics_and_render_alignment_passed": true,
+  "gpu_smoke_pending": true,
+  "allocation_policy": "Smoke, NanoWM evaluation, formal training and RoboJEPA evaluation in one job; no new queue between phases."
+}
