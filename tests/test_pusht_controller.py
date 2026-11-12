@@ -44,6 +44,13 @@ class RecoveryTransferTests(unittest.TestCase):
         with self.assertRaises(AssertionError):
             controller.verify_recovery_transfer(self.history, self.events)
 
+    def test_reviewed_resume_clears_only_the_previous_failure(self):
+        old='Stopped after failure; debug shell available for one hour.\n'
+        self.assertTrue(controller.has_unrepaired_debug_failure(old))
+        repaired=old+'POINTMAZE_MANUAL_RESUME\n'
+        self.assertFalse(controller.has_unrepaired_debug_failure(repaired))
+        self.assertTrue(controller.has_unrepaired_debug_failure(repaired+old))
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -94,3 +94,14 @@ pretrained weights and creates one `nanowm` run with a descriptive name.
 Results are pending. The controller saves small reports and a separate durable
 checkpoint archive, stops on failure, and never extends the authorized budget.
 The execution record is `world-models/jobs/pointmaze/state.json`.
+
+Startup correction: the first GPU allocation of job `8414049.0` stopped before
+smoke tests because its container did not expose the optional `nvidia-smi`
+command. Its debug window expired before intervention; no model updates or
+formal W&B run were created. Device metadata now comes from PyTorch with an
+optional UUID field. A reviewed `debug-resume.request` can restart the worker
+inside the same live allocation after a fix, preserving the failed-attempt
+record. It never retries errors automatically. Startup is actively monitored
+through smoke and baseline evaluation until formal training has at least
+100 consecutive finite updates. The failed allocation is retained in the
+experiment history; recovery uses the same job and reserved run identity.

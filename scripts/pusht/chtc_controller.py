@@ -15,6 +15,11 @@ def log(message):
     print(time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), message, flush=True)
 
 
+def has_unrepaired_debug_failure(stderr):
+    """A reviewed in-allocation resume supersedes only earlier failure messages."""
+    return 'Stopped after failure;' in stderr.rsplit('POINTMAZE_MANUAL_RESUME', 1)[-1]
+
+
 def verify_recovery_transfer(history, event_log):
     """Verify checkpoint upload plus final upload, including in-place restarts.
 
@@ -198,7 +203,7 @@ queue 1
                     self.update(training_gpu=gate['gpu']); pinned = True
                     log('Pinned all resumed allocations to '+gate['gpu'])
             err = self.root / phase / 'logs' / f'job.{job.split(".")[0]}.err'
-            if err.exists() and 'Stopped after failure;' in err.read_text(errors='replace'):
+            if err.exists() and has_unrepaired_debug_failure(err.read_text(errors='replace')):
                 raise RuntimeError(f'{phase} failed in the retained debug shell; subsequent stages stopped')
             # Only orchestration is polled; per-step training metrics remain in W&B.
             time.sleep(55)

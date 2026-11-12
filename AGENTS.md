@@ -27,6 +27,12 @@
   training and retain a bounded debug session in that allocation. Keep
   diagnostic weights, RNG, data position and logs separate; initialize formal
   training from its configured starting state. Diagnostics create no W&B run.
+- Actively monitor an allocated GPU through environment startup, smoke tests,
+  and any evaluation preceding training. Diagnose failures promptly inside the
+  retained allocation and resume there after a reviewed fix. Stop startup
+  monitoring only after FORMAL_TRAIN_START and consecutive finite training
+  loss/gradient updates (100 updates by default). This supersedes the earlier
+  preference to stop monitoring after submission.
 - Future formal NanoWM research runs use W&B project `nanowm`, entity
   `yibozhong657-none`. Override legacy launcher project names when necessary.
 - Resume an existing run in its original project and with the same run ID.

@@ -2,8 +2,10 @@
 # One GPU job: diagnostic gates, NanoWM baseline, fresh MAE transfer, shared evaluation.
 set -euo pipefail
 TASK_ROOT="$PWD"
-if [[ -f results.tar ]]; then tar -xf results.tar; fi
-if [[ -f checkpoints.tar ]]; then tar -xf checkpoints.tar; fi
+if [[ "${POINTMAZE_LIVE_RESUME:-0}" != 1 ]]; then
+  if [[ -f results.tar ]]; then tar -xf results.tar; fi
+  if [[ -f checkpoints.tar ]]; then tar -xf checkpoints.tar; fi
+fi
 mkdir -p reports training goals
 archive() {
   status=$?
@@ -12,7 +14,19 @@ archive() {
     printf '%s\n' "$status" > reports/failure.exit
     echo 'Stopped after failure; debug shell available for one hour.' >&2
     deadline=$((SECONDS+3600))
-    while [[ ! -f finish-debug ]] && (( SECONDS < deadline )); do sleep 5; done
+    while [[ ! -f finish-debug ]] && (( SECONDS < deadline )); do
+      if [[ -f debug-resume.request ]]; then
+        # Only an explicit operator repair request resumes; never retry a failure automatically.
+        mkdir -p reports/debug-repairs
+        stamp=$(date -u +%Y%m%dT%H%M%SZ)
+        mv debug-resume.request "reports/debug-repairs/$stamp.request"
+        mv reports/failure.exit "reports/debug-repairs/$stamp.failure.exit"
+        echo 'POINTMAZE_MANUAL_RESUME' >&2
+        export POINTMAZE_LIVE_RESUME=1
+        exec /bin/bash "$TASK_ROOT/worker.sh"
+      fi
+      sleep 5
+    done
   fi
   shopt -s nullglob
   files=(training/*.pt reports/recovery-reference/*.pt reports/recovery-resumed/*.pt goals/*.pt)
@@ -59,13 +73,13 @@ protocol=code/configs/pointmaze/shared_benchmark.yaml
 goals=goals/pointmaze-h5-seed42.pt
 cp code/SOURCE_VERSION.json reports/source.json
 cp code/uv.lock reports/uv.lock
-nvidia-smi --query-gpu=uuid,name --format=csv,noheader >> reports/allocations.txt
+"$PY" code/scripts/pointmaze/record_allocation.py --output reports/allocations.jsonl
 complete() {
   "$PY" -c 'import json,sys; from pathlib import Path; p=Path(sys.argv[1]); sys.exit(0 if p.exists() and json.loads(p.read_text()).get("completed") else 1)' "$1"
 }
 echo 'POINTMAZE_STAGE=smoke'
 if [[ ! -f reports/pytest-passed ]]; then
-  "$PY" -m pytest -q code/tests/latent code/tests/test_pusht_controller.py code/tests/test_pusht_loss_comparison.py > reports/pytest.txt 2>&1
+  "$PY" -m pytest -q code/tests/latent code/tests/test_pusht_controller.py code/tests/test_pusht_loss_comparison.py code/tests/test_pointmaze_allocation.py > reports/pytest.txt 2>&1
   touch reports/pytest-passed
 fi
 if [[ ! -f reports/hardware-gate.json ]]; then
