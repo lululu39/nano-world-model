@@ -1,0 +1,25 @@
+{
+  "strict": true,
+  "pretrained_predictor_exactly_equal": true,
+  "predictor_tensor_count": 106,
+  "encoder_frozen": true,
+  "action_dim": 10,
+  "embodiment_id": 2,
+  "state_policy": "zeros",
+  "input_size": [
+    256,
+    256
+  ],
+  "token_layout": "view,row,column,channel",
+  "grid": [
+    1,
+    16,
+    16,
+    1664
+  ],
+  "rollout_context_frames": 3,
+  "finetuned_step": 8,
+  "finetuned_run_id": null,
+  "loss_type": "mae",
+  "environment": "point_maze"
+}

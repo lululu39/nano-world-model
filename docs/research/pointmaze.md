@@ -118,5 +118,20 @@ passed, all 106 pretrained predictor tensors matched, and preprocessing, action
 alignment, causal dependence, gradients and exact next-update recovery passed.
 Maximum dataset state replay error was 2.4438e-6. The original worker process
 resumed in the same allocation, with no new job or formal run. Evidence is in
-`reports/pointmaze/startup-debug`; remaining recovery and planning checks precede
-formal training.
+`reports/pointmaze/startup-debug`.
+
+Actual exit-85 transfer and eight-update recovery subsequently passed with
+bitwise-equal training state and update metrics. The first planning smoke also
+exposed an undefined angle metric from the shared planner: PointMaze has no
+angle, so its episode records now omit that field. Strict nonfinite checks for
+measured metrics remain enabled, and four regression tests cover this behavior
+and PushT compatibility. That repair also reused the retained allocation.
+Both models then completed their two-goal closed-loop smoke checks. These are
+engineering checks, not benchmark results; the RoboJEPA smoke checkpoint has
+only eight diagnostic updates and never initializes formal training.
+
+The worker has entered the full 64-goal NanoWM evaluation. Fresh 3,000-update
+RoboJEPA training and its shared evaluation follow automatically in the same
+job. The execution source is `a6a9ae7`; the earlier recovery evidence remains
+applicable because training and recovery code did not change. Small smoke
+records and the timestamped status are in `reports/pointmaze/startup-debug`.

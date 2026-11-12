@@ -1,0 +1,24 @@
+{
+  "model": "nanowm",
+  "protocol": "pointmaze_shared_benchmark",
+  "diagnostic_subset": true,
+  "completed": true,
+  "episodes": 2,
+  "requested_episodes": 2,
+  "success_rate": 0.5,
+  "success_count": 1,
+  "success_wilson95": [
+    0.09452865480086614,
+    0.9054713451991339
+  ],
+  "goal_distance_mean": 3.4975234270095825,
+  "goal_distance_definition": "PointMaze four-dimensional state L2 (position and velocity units)",
+  "planning_latency_seconds": {
+    "median": 28.516632080543786,
+    "p95": 28.52119990742067,
+    "mean": 28.51685856952099,
+    "replans": 4
+  },
+  "latency_scope": "CUDA-synchronized online image encoding plus complete CEM; excludes warmup, simulator/rendering",
+  "paper_protocol_complete": false
+}

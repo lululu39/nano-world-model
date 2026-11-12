@@ -1,0 +1,19 @@
+{
+  "observed_at": "2026-11-12T03:39:38.284569+00:00",
+  "job": "8414049.0",
+  "run_id": "78a121fe",
+  "source": "a6a9ae735583ac81e7d7eb84e4816446d515e373",
+  "stage": "nanowm_evaluation",
+  "smoke_complete": true,
+  "formal_training_steps": 0,
+  "num_job_starts": 2,
+  "remote_host": "slot2_8@gpu5000.chtc.wisc.edu",
+  "controller_pid": 1362364,
+  "controller_active": true,
+  "debug_repairs_reused_allocation": true,
+  "remaining_duration_estimate_minutes": [
+    60,
+    90
+  ],
+  "continuous_foreground_monitoring": false
+}

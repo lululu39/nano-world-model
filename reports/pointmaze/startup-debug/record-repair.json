@@ -1,0 +1,14 @@
+{
+  "source": "a6a9ae735583ac81e7d7eb84e4816446d515e373",
+  "job": "8414049.0",
+  "run_id": "78a121fe",
+  "num_job_starts": 2,
+  "remote_host": "slot2_8@gpu5000.chtc.wisc.edu",
+  "repaired_at": "2026-11-12T03:35:09.335382+00:00",
+  "four_record_tests_passed": true,
+  "strict_nonfinite_checks_preserved": true,
+  "reused_recovery_source": "007280da2b7cf340d1e5a6b621fea26733e9a1ac",
+  "recovery_training_code_unchanged": true,
+  "failed_smoke_episodes_written": 0,
+  "controller_pid": 1362364
+}

@@ -1,0 +1,40 @@
+{
+  "name": "pointmaze_shared_benchmark",
+  "env_name": "point_maze",
+  "paper_protocol_complete": false,
+  "assumptions": [
+    "Official pretrained systems; different representations and pretraining data",
+    "Held-out dataset goals, unlike DINO-WM random-state goals",
+    "Reduced shared CEM 64/10/5, not the upstream 100/10/30 default",
+    "One GPU job, same GPU model, fixed goals, seeds, action budgets and synchronized timing"
+  ],
+  "n_evals": 64,
+  "seed": 42,
+  "n_plot_samples": 0,
+  "goal_source": "dset",
+  "goal_H": 5,
+  "horizon": 5,
+  "replan_every": 5,
+  "max_episode_steps": 10,
+  "frame_interval": 5,
+  "num_sampling_steps": 20,
+  "scheduling_mode": "full_sequence",
+  "precision": "bf16",
+  "cem": {
+    "num_samples": 64,
+    "topk": 10,
+    "opt_steps": 5,
+    "var_scale": 1.0,
+    "eval_every": 5,
+    "sigma_min": 0.001,
+    "action_low": null,
+    "action_high": null,
+    "rollout_batch_size": 64
+  },
+  "objective": {
+    "mode": "last",
+    "alpha": 1.0,
+    "base": 2.0,
+    "visual_metric": "mse"
+  }
+}

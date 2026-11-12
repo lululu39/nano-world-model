@@ -1,0 +1,19 @@
+{
+  "completed": true,
+  "interrupted_step": 4,
+  "final_step": 8,
+  "full_checkpoint_bitwise_equal": true,
+  "all_update_metrics_equal": true,
+  "diagnostic": true,
+  "wandb_run_created": false,
+  "first_allocation": {
+    "pid": 981,
+    "scratch": "/var/lib/condor/execute/slot2/dir_1800142/scratch",
+    "gpu": "NVIDIA H200",
+    "interrupted_step": 4
+  },
+  "restored_scratch": "/var/lib/condor/execute/slot2/dir_1800142/scratch",
+  "gpu": "NVIDIA H200",
+  "loss_type": "mae",
+  "planning_smoke": null
+}

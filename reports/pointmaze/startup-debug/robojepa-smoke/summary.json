@@ -1,0 +1,24 @@
+{
+  "model": "robojepa",
+  "protocol": "pointmaze_shared_benchmark",
+  "diagnostic_subset": true,
+  "completed": true,
+  "episodes": 2,
+  "requested_episodes": 2,
+  "success_rate": 0.0,
+  "success_count": 0,
+  "success_wilson95": [
+    0.0,
+    0.6576280471103807
+  ],
+  "goal_distance_mean": 3.911103129386902,
+  "goal_distance_definition": "PointMaze four-dimensional state L2 (position and velocity units)",
+  "planning_latency_seconds": {
+    "median": 0.9834943345049396,
+    "p95": 0.9855003048782237,
+    "mean": 0.9834533719695173,
+    "replans": 4
+  },
+  "latency_scope": "CUDA-synchronized online image encoding plus complete CEM; excludes warmup, simulator/rendering",
+  "paper_protocol_complete": false
+}
